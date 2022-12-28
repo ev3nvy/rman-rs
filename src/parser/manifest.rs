@@ -16,7 +16,7 @@ impl TryFrom<&[u8]> for Manifest {
     type Error = Error;
 
     fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
-        let manifest = root_as_manifest(&bytes).unwrap();
+        let manifest = root_as_manifest(bytes).unwrap();
 
         let languages = Self::try_map_languages(&manifest);
         let directories = Self::try_map_directories(&manifest);
