@@ -13,30 +13,6 @@ pub struct FileHeader {
     pub uncompressed_size: u32,
 }
 
-impl FileHeader {
-    pub fn new(
-        magic: u32,
-        major: u8,
-        minor: u8,
-        flags: u16,
-        offset: u32,
-        compressed_size: u32,
-        manifest_id: u64,
-        uncompressed_size: u32,
-    ) -> Self {
-        Self {
-            magic,
-            major,
-            minor,
-            flags,
-            offset,
-            compressed_size,
-            manifest_id,
-            uncompressed_size,
-        }
-    }
-}
-
 impl TryFrom<&[u8]> for FileHeader {
     type Error = Error;
 
