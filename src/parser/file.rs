@@ -66,7 +66,7 @@ impl TryFrom<&[u8]> for ManifestFile {
                 return Err(error);
             },
         };
-        let decompressed = match zstd::bulk::decompress(&mut buf, uncompressed_size) {
+        let decompressed = match zstd::bulk::decompress(&buf, uncompressed_size) {
             Ok(result) => result,
             Err(error) => return Err(Error::ZstdDecompressError(error.into())),
         };
