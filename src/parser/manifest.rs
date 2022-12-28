@@ -24,7 +24,7 @@ impl TryFrom<&[u8]> for Manifest {
 
         let file_entries = manifest
             .files()
-            .unwrap_or(flatbuffers::Vector::default());
+            .unwrap_or_default();
 
         let mut files = Vec::with_capacity(file_entries.len());
 
@@ -41,7 +41,7 @@ impl Manifest {
     fn try_map_languages(manifest: &ManifestFlatbuffer) -> HashMap<u8, String> {
         let language_entries = manifest
             .languages()
-            .unwrap_or(flatbuffers::Vector::default());
+            .unwrap_or_default();
 
         let mut languages = HashMap::with_capacity(language_entries.len());
 
@@ -58,7 +58,7 @@ impl Manifest {
     fn try_map_directories(manifest: &ManifestFlatbuffer) -> HashMap<u64, (String, u64)> {
         let directory_entries = manifest
             .directories()
-            .unwrap_or(flatbuffers::Vector::default());
+            .unwrap_or_default();
 
         let mut directories = HashMap::with_capacity(directory_entries.len());
 
@@ -76,14 +76,14 @@ impl Manifest {
     fn try_map_chunks(manifest: &ManifestFlatbuffer) -> HashMap<u64, (u64, u64, u32, u32)> {
         let bundle_entries = manifest
             .bundles()
-            .unwrap_or(flatbuffers::Vector::default());
+            .unwrap_or_default();
 
         let mut chunks = HashMap::new();
 
         for bundle in bundle_entries {
             let chunk_entries = bundle
                 .chunks()
-                .unwrap_or(flatbuffers::Vector::default());
+                .unwrap_or_default();
 
             let mut offset: u64 = 0;
 
