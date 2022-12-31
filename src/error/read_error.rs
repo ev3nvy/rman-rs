@@ -16,7 +16,7 @@ pub enum ReadError<T = Box<dyn std::error::Error>> {
 impl<T: std::error::Error> Display for ReadError<T> {
     fn fmt(&self, f: &mut Formatter) -> Result {
         let name = format!("{:?}", self).to_lowercase();
-        let name = name.split_once("(");
+        let name = name.split_once('(');
         let (name, _) = name.unwrap_or(("unknown_type", ""));
         writeln!(f, "Could not read {} from buffer. Error: {:?}", name, self)
     }
