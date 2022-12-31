@@ -11,6 +11,8 @@ pub enum Error<T = Box<dyn std::error::Error>> {
     InvalidMajor(u8),
     #[cfg(feature = "version_error")]
     InvalidMinor(u8),
+    InvalidOffset(u32, u32),
+    CompressedSizeTooLarge(u32, u32),
     ConversionFailure(String, String, T),
     ZstdDecompressError(T),
     FlatbufferError(T),
@@ -39,6 +41,16 @@ impl<T: std::error::Error> Display for Error<T> {
                 f,
                 "Unsupported minor version (expected: \"0\", was: \"{}\").",
                 minor
+            ),
+            Error::InvalidOffset(size, offset) => writeln!(
+                f,
+                "Offset points outside of the file (file_size: \"{}\", offset: \"{}\").",
+                size, offset,
+            ),
+            Error::CompressedSizeTooLarge(size, compressed_size) => writeln!(
+                f,
+                "Compressed size overflows the file (file_size: \"{}\", compressed_size: \"{}\").",
+                size, compressed_size,
             ),
             Error::ConversionFailure(from, to, error) => writeln!(
                 f,

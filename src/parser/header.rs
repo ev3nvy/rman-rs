@@ -27,8 +27,6 @@ impl TryFrom<&[u8]> for FileHeader {
         }
 
         let major = cursor.read_u8()?;
-        let minor = cursor.read_u8()?;
-
         if major != 2 {
             #[cfg(not(feature = "version_error"))]
             {
@@ -38,6 +36,8 @@ impl TryFrom<&[u8]> for FileHeader {
             #[cfg(feature = "version_error")]
             return Err(Error::InvalidMajor(major));
         }
+
+        let minor = cursor.read_u8()?;
         if major == 2 && minor != 0 {
             #[cfg(not(feature = "version_error"))]
             {
@@ -53,7 +53,33 @@ impl TryFrom<&[u8]> for FileHeader {
         let flags = cursor.read_u16()?;
 
         let offset = cursor.read_u32()?;
+
+        let size: u32 = match bytes.len().try_into() {
+            Ok(result) => result,
+            Err(error) => {
+                let error = Error::ConversionFailure(
+                    String::from("usize"),
+                    String::from("u32"),
+                    error.into(),
+                );
+                return Err(error);
+            }
+        };
+        if offset < 28 || offset >= size {
+            return Err(Error::InvalidOffset(size, offset));
+        }
+
         let compressed_size = cursor.read_u32()?;
+        if compressed_size > size - 28 {
+            return Err(Error::CompressedSizeTooLarge(size, compressed_size));
+        }
+        if compressed_size + offset > size {
+            return Err(Error::CompressedSizeTooLarge(
+                size,
+                compressed_size + offset,
+            ));
+        }
+
         let manifest_id = cursor.read_u64()?;
         let uncompressed_size = cursor.read_u32()?;
 
