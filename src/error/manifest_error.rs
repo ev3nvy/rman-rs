@@ -7,9 +7,9 @@ pub enum Error<T = Box<dyn std::error::Error>> {
     ReadFileError(T),
     CursorError(CursorError<T>),
     InvalidMagicBytes(u32),
-    #[cfg(feature="version_error")]
+    #[cfg(feature = "version_error")]
     InvalidMajor(u8),
-    #[cfg(feature="version_error")]
+    #[cfg(feature = "version_error")]
     InvalidMinor(u8),
     ConversionFailure(String, String, T),
     ZstdDecompressError(T),
@@ -28,13 +28,13 @@ impl<T: std::error::Error> Display for Error<T> {
                 "Invalid magic bytes (expected: \"0x4E414D52\", was: \"{:#010x}\").",
                 magic
             ),
-            #[cfg(feature="version_error")]
+            #[cfg(feature = "version_error")]
             Error::InvalidMajor(major) => writeln!(
                 f,
                 "Unsupported major version (expected: \"2\", was: \"{}\").",
                 major
             ),
-            #[cfg(feature="version_error")]
+            #[cfg(feature = "version_error")]
             Error::InvalidMinor(minor) => writeln!(
                 f,
                 "Unsupported minor version (expected: \"0\", was: \"{}\").",
@@ -43,9 +43,7 @@ impl<T: std::error::Error> Display for Error<T> {
             Error::ConversionFailure(from, to, error) => writeln!(
                 f,
                 "Conversion from \"{}\" to \"{}\" failed. Error: {}",
-                from,
-                to,
-                error
+                from, to, error
             ),
             Error::ZstdDecompressError(error) => writeln!(f, "{}", error),
             Error::FlatbufferError(error) => {

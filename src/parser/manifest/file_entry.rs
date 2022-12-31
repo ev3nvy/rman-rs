@@ -20,7 +20,7 @@ impl FileEntry {
         file: &File,
         language_entries: &HashMap<u8, String>,
         directories: &HashMap<u64, (String, u64)>,
-        chunk_entries: &HashMap<u64, (u64, u64, u32, u32)>
+        chunk_entries: &HashMap<u64, (u64, u64, u32, u32)>,
     ) -> Result<Self, Error> {
         let id = file.id();
         let name = file.name().unwrap_or_default().to_string();
@@ -60,7 +60,16 @@ impl FileEntry {
             chunks.push(chunk.to_owned());
         }
 
-        let file = Self { id, name, permissions, size, path, link, languages, chunks };
+        let file = Self {
+            id,
+            name,
+            permissions,
+            size,
+            path,
+            link,
+            languages,
+            chunks,
+        };
         Ok(file)
     }
 }

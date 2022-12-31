@@ -1,5 +1,5 @@
 use std::fs;
-use std::io::{Seek, SeekFrom, Read};
+use std::io::{Read, Seek, SeekFrom};
 use std::path::{Path, PathBuf};
 
 use crate::error::{CursorError, Error};
@@ -23,7 +23,7 @@ impl ManifestFile {
 
     pub fn try_from_path<P>(path: P) -> Result<Self, Error>
     where
-        P: AsRef<Path>
+        P: AsRef<Path>,
     {
         let bytes = match fs::read(path) {
             Ok(result) => result,
@@ -40,7 +40,10 @@ impl TryFrom<&[u8]> for ManifestFile {
         let file_header = FileHeader::try_from(bytes)?;
         let mut cursor = Cursor::from(bytes);
 
-        if let Err(error) = cursor.cursor.seek(SeekFrom::Start(file_header.offset.into())) {
+        if let Err(error) = cursor
+            .cursor
+            .seek(SeekFrom::Start(file_header.offset.into()))
+        {
             let cursor_error = CursorError::SeekError(error.into());
             return Err(Error::CursorError(cursor_error));
         }
@@ -48,9 +51,13 @@ impl TryFrom<&[u8]> for ManifestFile {
         let compressed_size: usize = match file_header.compressed_size.try_into() {
             Ok(result) => result,
             Err(error) => {
-                let error = Error::ConversionFailure(String::from("u32"), String::from("usize"), error.into());
+                let error = Error::ConversionFailure(
+                    String::from("u32"),
+                    String::from("usize"),
+                    error.into(),
+                );
                 return Err(error);
-            },
+            }
         };
         let mut buf = vec![0u8; compressed_size];
 
@@ -62,9 +69,13 @@ impl TryFrom<&[u8]> for ManifestFile {
         let uncompressed_size: usize = match file_header.uncompressed_size.try_into() {
             Ok(result) => result,
             Err(error) => {
-                let error = Error::ConversionFailure(String::from("u32"), String::from("usize"), error.into());
+                let error = Error::ConversionFailure(
+                    String::from("u32"),
+                    String::from("usize"),
+                    error.into(),
+                );
                 return Err(error);
-            },
+            }
         };
         let decompressed = match zstd::bulk::decompress(&buf, uncompressed_size) {
             Ok(result) => result,
