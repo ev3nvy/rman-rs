@@ -12,6 +12,7 @@ pub struct FileEntry {
     pub path: String,
     pub link: String,
     pub languages: Vec<String>,
+    #[allow(dead_code)]
     chunks: Vec<(u64, u64, u32, u32)>,
 }
 
