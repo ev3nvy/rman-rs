@@ -37,7 +37,7 @@ impl TryFrom<File<'_>> for FileEntry {
         let params_index = file.params_index();
         let permissions = file.permissions();
 
-        let chunk_ids = chunk_ids.iter().map(|i| i).collect();
+        let chunk_ids = chunk_ids.iter().collect();
 
         Ok(Self {
             id,

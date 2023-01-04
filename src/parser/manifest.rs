@@ -48,11 +48,11 @@ impl TryFrom<Vec<u8>> for Manifest {
     fn try_from(bytes: Vec<u8>) -> Result<Self, Self::Error> {
         let manifest = root_as_manifest(&bytes).unwrap();
 
-        let bundle_entries = map_vector!(manifest, bundles, BundleEntry);
-        let directory_entries = map_vector!(manifest, directories, DirectoryEntry);
+        let bundle_entries: Vec<_> = map_vector!(manifest, bundles, BundleEntry);
+        let directory_entries: Vec<_> = map_vector!(manifest, directories, DirectoryEntry);
         let file_entries: Vec<_> = map_vector!(manifest, files, FileEntry);
         let key_entries = map_vector!(manifest, keys, KeyEntry);
-        let language_entries = map_vector!(manifest, languages, LanguageEntry);
+        let language_entries: Vec<_> = map_vector!(manifest, languages, LanguageEntry);
         let param_entries = map_vector!(manifest, params, ParamEntry);
 
         let mapped_languages = Self::try_map_languages(&language_entries);
@@ -75,31 +75,26 @@ impl TryFrom<Vec<u8>> for Manifest {
             param_entries,
             files,
         })
-        // Ok(Self { languages, files })
     }
 }
 
 impl Manifest {
-    fn try_map_languages(language_entries: &Vec<LanguageEntry>) -> HashMap<u8, String> {
-        let language_entries: Vec<(u8, String)> = language_entries
+    fn try_map_languages(language_entries: &[LanguageEntry]) -> HashMap<u8, String> {
+        language_entries
             .iter()
             .map(|l| (l.id, l.name.to_string()))
-            .collect();
-
-        language_entries.into_iter().collect()
+            .collect()
     }
 
-    fn try_map_directories(directory_entries: &Vec<DirectoryEntry>) -> HashMap<u64, (String, u64)> {
-        let directory_entries: Vec<(u64, (String, u64))> = directory_entries
+    fn try_map_directories(directory_entries: &[DirectoryEntry]) -> HashMap<u64, (String, u64)> {
+        directory_entries
             .iter()
             .map(|d| (d.id, (d.name.to_string(), d.parent_id)))
-            .collect();
-
-        directory_entries.into_iter().collect()
+            .collect()
     }
 
-    fn try_map_chunks(bundle_entries: &Vec<BundleEntry>) -> HashMap<u64, (u64, u64, u32, u32)> {
-        let chunk_entries: Vec<(u64, (u64, u64, u32, u32))> = bundle_entries
+    fn try_map_chunks(bundle_entries: &[BundleEntry]) -> HashMap<u64, (u64, u64, u32, u32)> {
+        bundle_entries
             .iter()
             .flat_map(|b| {
                 b.chunks.iter().scan(0, move |offset, c| {
@@ -115,8 +110,6 @@ impl Manifest {
                     ))
                 })
             })
-            .collect();
-
-        chunk_entries.into_iter().collect()
+            .collect()
     }
 }
