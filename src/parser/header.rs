@@ -1,7 +1,7 @@
 use crate::error::Error;
 use crate::structs::Cursor;
 
-#[derive(Clone, Copy, Debug, Default)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct FileHeader {
     pub magic: u32,
     pub major: u8,

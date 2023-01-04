@@ -1,26 +1,20 @@
 use std::fs;
 use std::io::{Read, Seek, SeekFrom};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use crate::error::{CursorError, Error};
 use crate::structs::Cursor;
+// use crate::FileEntry;
 
 use super::{FileHeader, Manifest};
 
-#[derive(Debug)]
+#[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct ManifestFile {
-    pub file_header: FileHeader,
-    pub manifest: Manifest,
+    file_header: FileHeader,
+    manifest: Manifest,
 }
 
 impl ManifestFile {
-    pub fn new(file_header: FileHeader, manifest: Manifest) -> Self {
-        Self {
-            file_header,
-            manifest,
-        }
-    }
-
     pub fn try_from_path<P>(path: P) -> Result<Self, Error>
     where
         P: AsRef<Path>,
@@ -29,6 +23,14 @@ impl ManifestFile {
             Ok(result) => result,
             Err(error) => return Err(Error::ReadFileError(error.into())),
         };
+        Self::try_from(&bytes[..])
+    }
+}
+
+impl TryFrom<Vec<u8>> for ManifestFile {
+    type Error = Error;
+
+    fn try_from(bytes: Vec<u8>) -> Result<Self, Self::Error> {
         Self::try_from(&bytes[..])
     }
 }
@@ -82,7 +84,7 @@ impl TryFrom<&[u8]> for ManifestFile {
             Err(error) => return Err(Error::ZstdDecompressError(error.into())),
         };
 
-        let manifest = Manifest::try_from(&decompressed[..])?;
+        let manifest = Manifest::try_from(decompressed)?;
 
         Ok(Self {
             file_header,
@@ -91,26 +93,12 @@ impl TryFrom<&[u8]> for ManifestFile {
     }
 }
 
-impl TryFrom<Vec<u8>> for ManifestFile {
-    type Error = Error;
-
-    fn try_from(bytes: Vec<u8>) -> Result<Self, Self::Error> {
-        Self::try_from(&bytes[..])
+impl ManifestFile {
+    pub fn manifest_header(&self) -> &FileHeader {
+        &self.file_header
     }
-}
 
-impl TryFrom<String> for ManifestFile {
-    type Error = Error;
-
-    fn try_from(path: String) -> Result<Self, Self::Error> {
-        Self::try_from_path(path)
-    }
-}
-
-impl TryFrom<PathBuf> for ManifestFile {
-    type Error = Error;
-
-    fn try_from(path: PathBuf) -> Result<Self, Self::Error> {
-        Self::try_from_path(path)
+    pub fn manifest(&self) -> &Manifest {
+        &self.manifest
     }
 }

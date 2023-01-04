@@ -20,7 +20,7 @@ pub use self::key_entry::KeyEntry;
 pub use self::language_entry::LanguageEntry;
 pub use self::param_entry::ParamEntry;
 
-#[derive(Debug, Default, Clone, PartialEq)]
+#[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct Manifest {
     pub bundle_entries: Vec<BundleEntry>,
     pub directory_entries: Vec<DirectoryEntry>,
