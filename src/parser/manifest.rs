@@ -9,98 +9,114 @@ mod param_entry;
 
 use std::collections::HashMap;
 
-pub use file_entry::FileEntry;
-
 use crate::error::Error;
-use crate::generated::rman::{root_as_manifest, Manifest as ManifestFlatbuffer};
+use crate::generated::rman::root_as_manifest;
 
 pub use self::bundle_entry::BundleEntry;
-#[derive(Debug, Default)]
+pub use self::directory_entry::DirectoryEntry;
 pub use self::file::File;
 pub use self::file_entry::FileEntry;
 pub use self::key_entry::KeyEntry;
 pub use self::language_entry::LanguageEntry;
 pub use self::param_entry::ParamEntry;
+
+#[derive(Debug, Default, Clone, PartialEq)]
 pub struct Manifest {
-    pub files: Vec<FileEntry>,
+    pub bundle_entries: Vec<BundleEntry>,
+    pub directory_entries: Vec<DirectoryEntry>,
+    pub file_entries: Vec<FileEntry>,
+    pub key_entries: Vec<KeyEntry>,
+    pub language_entries: Vec<LanguageEntry>,
+    pub param_entries: Vec<ParamEntry>,
+    pub files: Vec<File>,
 }
 
-impl TryFrom<&[u8]> for Manifest {
+macro_rules! map_vector {
+    ($manifest: ident, $name: ident, $entry: ident) => {
+        $manifest
+            .$name()
+            .unwrap_or_default()
+            .iter()
+            .map(|i| $entry::try_from(i).unwrap_or_default())
+            .collect()
+    };
+}
+
+impl TryFrom<Vec<u8>> for Manifest {
     type Error = Error;
 
-    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
-        let manifest = root_as_manifest(bytes).unwrap();
+    fn try_from(bytes: Vec<u8>) -> Result<Self, Self::Error> {
+        let manifest = root_as_manifest(&bytes).unwrap();
 
-        let languages = Self::try_map_languages(&manifest);
-        let directories = Self::try_map_directories(&manifest);
-        let chunks = Self::try_map_chunks(&manifest);
+        let bundle_entries = map_vector!(manifest, bundles, BundleEntry);
+        let directory_entries = map_vector!(manifest, directories, DirectoryEntry);
+        let file_entries: Vec<_> = map_vector!(manifest, files, FileEntry);
+        let key_entries = map_vector!(manifest, keys, KeyEntry);
+        let language_entries = map_vector!(manifest, languages, LanguageEntry);
+        let param_entries = map_vector!(manifest, params, ParamEntry);
 
-        let file_entries = manifest.files().unwrap_or_default();
+        let mapped_languages = Self::try_map_languages(&language_entries);
+        let mapped_directories = Self::try_map_directories(&directory_entries);
+        let mapped_chunks = Self::try_map_chunks(&bundle_entries);
 
-        let mut files = Vec::with_capacity(file_entries.len());
+        let files = file_entries
+            .iter()
+            .map(|f| {
+                File::try_parse(f, &mapped_languages, &mapped_directories, &mapped_chunks).unwrap()
+            })
+            .collect();
 
-        for file in file_entries {
-            let file = FileEntry::try_parse(&file, &languages, &directories, &chunks);
-            files.push(file?);
-        }
-
-        Ok(Self { files })
+        Ok(Self {
+            bundle_entries,
+            directory_entries,
+            file_entries,
+            key_entries,
+            language_entries,
+            param_entries,
+            files,
+        })
+        // Ok(Self { languages, files })
     }
 }
 
 impl Manifest {
-    fn try_map_languages(manifest: &ManifestFlatbuffer) -> HashMap<u8, String> {
-        let language_entries = manifest.languages().unwrap_or_default();
+    fn try_map_languages(language_entries: &Vec<LanguageEntry>) -> HashMap<u8, String> {
+        let language_entries: Vec<(u8, String)> = language_entries
+            .iter()
+            .map(|l| (l.id, l.name.to_string()))
+            .collect();
 
-        let mut languages = HashMap::with_capacity(language_entries.len());
-
-        for language in language_entries {
-            let id = language.id();
-            let name = language.name().unwrap_or_default();
-
-            languages.insert(id, name.to_string());
-        }
-
-        languages
+        language_entries.into_iter().collect()
     }
 
-    fn try_map_directories(manifest: &ManifestFlatbuffer) -> HashMap<u64, (String, u64)> {
-        let directory_entries = manifest.directories().unwrap_or_default();
+    fn try_map_directories(directory_entries: &Vec<DirectoryEntry>) -> HashMap<u64, (String, u64)> {
+        let directory_entries: Vec<(u64, (String, u64))> = directory_entries
+            .iter()
+            .map(|d| (d.id, (d.name.to_string(), d.parent_id)))
+            .collect();
 
-        let mut directories = HashMap::with_capacity(directory_entries.len());
-
-        for directory in directory_entries {
-            let id = directory.id();
-            let parent_id = directory.parent_id();
-            let name = directory.name().unwrap_or_default();
-
-            directories.insert(id, (name.to_string(), parent_id));
-        }
-
-        directories
+        directory_entries.into_iter().collect()
     }
 
-    fn try_map_chunks(manifest: &ManifestFlatbuffer) -> HashMap<u64, (u64, u64, u32, u32)> {
-        let bundle_entries = manifest.bundles().unwrap_or_default();
+    fn try_map_chunks(bundle_entries: &Vec<BundleEntry>) -> HashMap<u64, (u64, u64, u32, u32)> {
+        let chunk_entries: Vec<(u64, (u64, u64, u32, u32))> = bundle_entries
+            .iter()
+            .flat_map(|b| {
+                b.chunks.iter().scan(0, move |offset, c| {
+                    *offset += u64::from(c.compressed_size);
+                    Some((
+                        c.id,
+                        (
+                            b.id,
+                            *offset - u64::from(c.compressed_size),
+                            c.uncompressed_size,
+                            c.compressed_size,
+                        ),
+                    ))
+                })
+            })
+            .collect();
 
-        let mut chunks = HashMap::new();
-
-        for bundle in bundle_entries {
-            let chunk_entries = bundle.chunks().unwrap_or_default();
-
-            let mut offset: u64 = 0;
-
-            for chunk in chunk_entries {
-                let id = chunk.id();
-                let parent_id = bundle.id();
-                let uncompressed_size = chunk.uncompressed_size();
-                let compressed_size = chunk.compressed_size();
-
-                chunks.insert(id, (parent_id, offset, uncompressed_size, compressed_size));
-                offset += u64::from(compressed_size);
-            }
-        }
-
-        chunks
+        chunk_entries.into_iter().collect()
     }
 }
