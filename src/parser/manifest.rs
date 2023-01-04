@@ -1,6 +1,7 @@
 mod bundle_entry;
 mod chunk_entry;
 mod directory_entry;
+mod file;
 mod file_entry;
 mod key_entry;
 mod language_entry;
@@ -13,7 +14,13 @@ pub use file_entry::FileEntry;
 use crate::error::Error;
 use crate::generated::rman::{root_as_manifest, Manifest as ManifestFlatbuffer};
 
+pub use self::bundle_entry::BundleEntry;
 #[derive(Debug, Default)]
+pub use self::file::File;
+pub use self::file_entry::FileEntry;
+pub use self::key_entry::KeyEntry;
+pub use self::language_entry::LanguageEntry;
+pub use self::param_entry::ParamEntry;
 pub struct Manifest {
     pub files: Vec<FileEntry>,
 }

@@ -1,76 +1,58 @@
-use std::collections::HashMap;
+use std::io::Error;
 
-use crate::error::Error;
 use crate::generated::rman::File;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct FileEntry {
     pub id: u64,
-    pub name: String,
-    pub permissions: u8,
+    pub directory_id: u64,
     pub size: u32,
-    pub path: String,
+    pub name: String,
+    pub language_mask: u64,
+    pub unk5: u8,
+    pub unk6: u8,
+    pub chunk_ids: Vec<u64>,
+    pub unk8: u8,
     pub link: String,
-    pub languages: Vec<String>,
-    #[allow(dead_code)]
-    chunks: Vec<(u64, u64, u32, u32)>,
+    pub unk10: u16,
+    pub params_index: u8,
+    pub permissions: u8,
 }
 
-impl FileEntry {
-    pub fn try_parse(
-        file: &File,
-        language_entries: &HashMap<u8, String>,
-        directories: &HashMap<u64, (String, u64)>,
-        chunk_entries: &HashMap<u64, (u64, u64, u32, u32)>,
-    ) -> Result<Self, Error> {
+impl TryFrom<File<'_>> for FileEntry {
+    type Error = Error;
+
+    fn try_from(file: File) -> Result<Self, Self::Error> {
         let id = file.id();
-        let name = file.name().unwrap_or_default().to_string();
-        let permissions = file.permissions();
+        let directory_id = file.directory_id();
         let size = file.size_();
-        let link = file.link().unwrap_or_default().to_string();
+        let name = file.name().unwrap_or_default().to_string();
         let language_mask = file.language_mask();
-        let chunk_ids = file.chunk_ids().unwrap();
+        let unk5 = file.unk5();
+        let unk6 = file.unk6();
+        let chunk_ids = file.chunk_ids().unwrap_or_default();
+        let unk8 = file.unk8();
+        let link = file.link().unwrap_or_default().to_string();
+        let unk10 = file.unk10();
+        let params_index = file.params_index();
+        let permissions = file.permissions();
 
-        let mut directory_id = file.directory_id();
-        let mut path = String::new();
+        let chunk_ids = chunk_ids.iter().map(|i| i).collect();
 
-        while directory_id != 0 {
-            let (dir_name, parent_id) = directories.get(&directory_id).unwrap();
-            path = format!("{}/{}", dir_name, path);
-            directory_id = *parent_id;
-        }
-
-        path.push_str(&name);
-
-        let mut languages = Vec::new();
-
-        for i in 0..64 {
-            if (language_mask & (1u64 << i)) == 0 {
-                continue;
-            }
-
-            if let Some(lang_name) = language_entries.get(&(i + 1)) {
-                languages.push(lang_name.to_string());
-            }
-        }
-
-        let mut chunks = Vec::new();
-
-        for chunk_id in chunk_ids {
-            let chunk = chunk_entries.get(&chunk_id).unwrap();
-            chunks.push(chunk.to_owned());
-        }
-
-        let file = Self {
+        Ok(Self {
             id,
-            name,
-            permissions,
+            directory_id,
             size,
-            path,
+            name,
+            language_mask,
+            unk5,
+            unk6,
+            chunk_ids,
+            unk8,
             link,
-            languages,
-            chunks,
-        };
-        Ok(file)
+            unk10,
+            params_index,
+            permissions,
+        })
     }
 }
