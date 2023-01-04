@@ -1,4 +1,10 @@
-pub mod file_entry;
+mod bundle_entry;
+mod chunk_entry;
+mod directory_entry;
+mod file_entry;
+mod key_entry;
+mod language_entry;
+mod param_entry;
 
 use std::collections::HashMap;
 
