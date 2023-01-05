@@ -33,7 +33,7 @@ macro_rules! read {
                     let mut buffer = [0u8; std::mem::size_of::<$type>()];
 
                     if let Err(error) = self.cursor.read_exact(&mut buffer) {
-                        let read_error = crate::error::ReadError::$read_type(error.into());
+                        let read_error = crate::error::ReadError::$read_type(error);
                         let cursor_error = crate::error::CursorError::ReadError(read_error);
                         return Err(crate::error::Error::CursorError(cursor_error));
                     }

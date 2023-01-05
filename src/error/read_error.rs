@@ -1,7 +1,9 @@
 use std::fmt::{Display, Formatter, Result};
 
-#[derive(Debug)]
-pub enum ReadError<T = Box<dyn std::error::Error>> {
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+pub enum ReadError<T = std::io::Error> {
     I8(T),
     I16(T),
     I32(T),

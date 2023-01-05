@@ -1,22 +1,13 @@
-use std::fmt::{Debug, Display, Formatter, Result};
+use thiserror::Error;
 
 use super::ReadError;
 
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum CursorError<T = Box<dyn std::error::Error>> {
-    ReadError(ReadError<T>),
+    #[error("{0}")]
+    ReadError(#[from] ReadError),
+    #[error("{0}")]
     ReadManyError(T),
-    SeekError(T),
-}
-
-impl<T: std::error::Error> std::error::Error for CursorError<T> {}
-
-impl<T: std::error::Error> Display for CursorError<T> {
-    fn fmt(&self, f: &mut Formatter) -> Result {
-        match self {
-            CursorError::ReadError(error) => writeln!(f, "{}", error),
-            CursorError::ReadManyError(error) => writeln!(f, "{}", error),
-            CursorError::SeekError(error) => writeln!(f, "SeekError: {}", error),
-        }
-    }
+    #[error("SeekError: {0}")]
+    SeekError(#[from] std::io::Error),
 }
