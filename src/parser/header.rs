@@ -30,22 +30,16 @@ impl TryFrom<&[u8]> for FileHeader {
 
         let major = cursor.read_u8()?;
         if major != 2 {
-            #[cfg(not(feature = "version_error"))]
-            {
-                warn!("Invalid major version. Parsing the manfiset may not work.");
-                info!("If you want the crate to throw an error instead, you can enable the \"version_error\" feature");
-            }
+            warn!("Invalid major version. Parsing the manfiset may not work.");
+            info!("If you want the crate to throw an error instead, you can enable the \"version_error\" feature");
             #[cfg(feature = "version_error")]
             return Err(ManifestError::InvalidMajor(major));
         }
 
         let minor = cursor.read_u8()?;
         if major == 2 && minor != 0 {
-            #[cfg(not(feature = "version_error"))]
-            {
-                info!("Invalid minor version. Parsing the manfiset will probably still work.");
-                info!("If you want the crate to throw an error instead, you can enable the \"version_error\" feature");
-            }
+            info!("Invalid minor version. Parsing the manfiset will probably still work.");
+            info!("If you want the crate to throw an error instead, you can enable the \"version_error\" feature");
             #[cfg(feature = "version_error")]
             return Err(ManifestError::InvalidMinor(minor));
         }
