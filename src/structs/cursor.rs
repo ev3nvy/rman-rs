@@ -29,13 +29,13 @@ macro_rules! read {
     ($type: ident, $read_type: ident) => {
         paste::item! {
             impl<'a> Cursor<'a> {
-                pub fn [<read_$type>](&mut self) -> Result<$type, crate::error::Error> {
+                pub fn [<read_$type>](&mut self) -> Result<$type, crate::error::ManifestError> {
                     let mut buffer = [0u8; std::mem::size_of::<$type>()];
 
                     if let Err(error) = self.cursor.read_exact(&mut buffer) {
                         let read_error = crate::error::ReadError::$read_type(error);
                         let cursor_error = crate::error::CursorError::ReadError(read_error);
-                        return Err(crate::error::Error::CursorError(cursor_error));
+                        return Err(crate::error::ManifestError::CursorError(cursor_error));
                     }
 
                     let result = $type::from_le_bytes(buffer);

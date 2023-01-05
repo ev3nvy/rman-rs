@@ -9,7 +9,7 @@ mod param_entry;
 
 use std::collections::HashMap;
 
-use crate::error::Error;
+use crate::error::ManifestError;
 use crate::generated::rman::root_as_manifest;
 
 pub use self::bundle_entry::BundleEntry;
@@ -43,7 +43,7 @@ macro_rules! map_vector {
 }
 
 impl TryFrom<Vec<u8>> for Manifest {
-    type Error = Error;
+    type Error = ManifestError;
 
     fn try_from(bytes: Vec<u8>) -> Result<Self, Self::Error> {
         let manifest = root_as_manifest(&bytes).unwrap();

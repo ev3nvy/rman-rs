@@ -3,7 +3,7 @@ use thiserror::Error;
 use super::CursorError;
 
 #[derive(Error, Debug)]
-pub enum Error<T = Box<dyn std::error::Error>> {
+pub enum ManifestError<T = Box<dyn std::error::Error>> {
     #[error("Failed reading file: {0}")]
     ReadFileError(#[from] std::io::Error),
     #[error("{0}")]

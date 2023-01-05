@@ -2,9 +2,8 @@ use std::fs;
 use std::io::{Read, Seek, SeekFrom};
 use std::path::Path;
 
-use crate::error::{CursorError, Error};
+use crate::error::{CursorError, ManifestError};
 use crate::structs::Cursor;
-// use crate::FileEntry;
 
 use super::{FileHeader, Manifest};
 
@@ -15,20 +14,20 @@ pub struct ManifestFile {
 }
 
 impl ManifestFile {
-    pub fn try_from_path<P>(path: P) -> Result<Self, Error>
+    pub fn try_from_path<P>(path: P) -> Result<Self, ManifestError>
     where
         P: AsRef<Path>,
     {
         let bytes = match fs::read(path) {
             Ok(result) => result,
-            Err(error) => return Err(Error::ReadFileError(error.into())),
+            Err(error) => return Err(ManifestError::ReadFileError(error.into())),
         };
         Self::try_from(&bytes[..])
     }
 }
 
 impl TryFrom<Vec<u8>> for ManifestFile {
-    type Error = Error;
+    type Error = ManifestError;
 
     fn try_from(bytes: Vec<u8>) -> Result<Self, Self::Error> {
         Self::try_from(&bytes[..])
@@ -36,7 +35,7 @@ impl TryFrom<Vec<u8>> for ManifestFile {
 }
 
 impl TryFrom<&[u8]> for ManifestFile {
-    type Error = Error;
+    type Error = ManifestError;
 
     fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
         let file_header = FileHeader::try_from(bytes)?;
@@ -47,13 +46,13 @@ impl TryFrom<&[u8]> for ManifestFile {
             .seek(SeekFrom::Start(file_header.offset.into()))
         {
             let cursor_error = CursorError::SeekError(error.into());
-            return Err(Error::CursorError(cursor_error));
+            return Err(ManifestError::CursorError(cursor_error));
         }
 
         let compressed_size: usize = match file_header.compressed_size.try_into() {
             Ok(result) => result,
             Err(error) => {
-                let error = Error::ConversionFailure(
+                let error = ManifestError::ConversionFailure(
                     String::from("u32"),
                     String::from("usize"),
                     error.into(),
@@ -65,13 +64,13 @@ impl TryFrom<&[u8]> for ManifestFile {
 
         if let Err(error) = cursor.cursor.read_exact(&mut buf) {
             let cursor_error = CursorError::ReadManyError(error.into());
-            return Err(Error::CursorError(cursor_error));
+            return Err(ManifestError::CursorError(cursor_error));
         }
 
         let uncompressed_size: usize = match file_header.uncompressed_size.try_into() {
             Ok(result) => result,
             Err(error) => {
-                let error = Error::ConversionFailure(
+                let error = ManifestError::ConversionFailure(
                     String::from("u32"),
                     String::from("usize"),
                     error.into(),
@@ -81,7 +80,7 @@ impl TryFrom<&[u8]> for ManifestFile {
         };
         let decompressed = match zstd::bulk::decompress(&buf, uncompressed_size) {
             Ok(result) => result,
-            Err(error) => return Err(Error::ZstdDecompressError(error.into())),
+            Err(error) => return Err(ManifestError::ZstdDecompressError(error.into())),
         };
 
         let manifest = Manifest::try_from(decompressed)?;

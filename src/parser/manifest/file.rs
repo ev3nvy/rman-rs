@@ -1,9 +1,8 @@
 use std::collections::HashMap;
 
-use crate::error::Error;
+use crate::error::ManifestError;
 
 use super::file_entry::FileEntry;
-// use crate::generated::rman::File;
 
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct File {
@@ -24,7 +23,7 @@ impl File {
         language_entries: &HashMap<u8, String>,
         directories: &HashMap<u64, (String, u64)>,
         chunk_entries: &HashMap<u64, (u64, u64, u32, u32)>,
-    ) -> Result<Self, Error> {
+    ) -> Result<Self, ManifestError> {
         let id = file.id;
         let name = file.name.to_string();
         let permissions = file.permissions;

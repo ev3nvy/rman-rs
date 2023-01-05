@@ -1,4 +1,4 @@
-use crate::error::Error;
+use crate::error::ManifestError;
 use crate::structs::Cursor;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -14,7 +14,7 @@ pub struct FileHeader {
 }
 
 impl TryFrom<&[u8]> for FileHeader {
-    type Error = Error;
+    type Error = ManifestError;
 
     fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
         let mut cursor = Cursor::from(bytes);
@@ -23,7 +23,7 @@ impl TryFrom<&[u8]> for FileHeader {
         // N A M R (RMAN bacwards because I am reading this as an u32, instead
         // of as an array of chars)
         if magic != 0x4E414D52 {
-            return Err(Error::InvalidMagicBytes(magic));
+            return Err(ManifestError::InvalidMagicBytes(magic));
         }
 
         let major = cursor.read_u8()?;
@@ -34,7 +34,7 @@ impl TryFrom<&[u8]> for FileHeader {
                 println!("If you want the crate to throw an error instead, you can enable the \"version_error\" feature");
             }
             #[cfg(feature = "version_error")]
-            return Err(Error::InvalidMajor(major));
+            return Err(ManifestError::InvalidMajor(major));
         }
 
         let minor = cursor.read_u8()?;
@@ -47,7 +47,7 @@ impl TryFrom<&[u8]> for FileHeader {
                 println!("If you want the crate to throw an error instead, you can enable the \"version_error\" feature");
             }
             #[cfg(feature = "version_error")]
-            return Err(Error::InvalidMinor(minor));
+            return Err(ManifestError::InvalidMinor(minor));
         }
 
         let flags = cursor.read_u16()?;
@@ -57,7 +57,7 @@ impl TryFrom<&[u8]> for FileHeader {
         let size: u32 = match bytes.len().try_into() {
             Ok(result) => result,
             Err(error) => {
-                let error = Error::ConversionFailure(
+                let error = ManifestError::ConversionFailure(
                     String::from("usize"),
                     String::from("u32"),
                     error.into(),
@@ -66,15 +66,15 @@ impl TryFrom<&[u8]> for FileHeader {
             }
         };
         if offset < 28 || offset >= size {
-            return Err(Error::InvalidOffset(size, offset));
+            return Err(ManifestError::InvalidOffset(size, offset));
         }
 
         let compressed_size = cursor.read_u32()?;
         if compressed_size > size - 28 {
-            return Err(Error::CompressedSizeTooLarge(size, compressed_size));
+            return Err(ManifestError::CompressedSizeTooLarge(size, compressed_size));
         }
         if compressed_size + offset > size {
-            return Err(Error::CompressedSizeTooLarge(
+            return Err(ManifestError::CompressedSizeTooLarge(
                 size,
                 compressed_size + offset,
             ));
