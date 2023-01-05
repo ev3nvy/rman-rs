@@ -1,3 +1,5 @@
+use log::{debug, info, warn};
+
 use crate::error::ManifestError;
 use crate::structs::Cursor;
 
@@ -30,8 +32,8 @@ impl TryFrom<&[u8]> for FileHeader {
         if major != 2 {
             #[cfg(not(feature = "version_error"))]
             {
-                println!("Warning: Invalid major version. Parsing the manfiset may not work.");
-                println!("If you want the crate to throw an error instead, you can enable the \"version_error\" feature");
+                warn!("Invalid major version. Parsing the manfiset may not work.");
+                info!("If you want the crate to throw an error instead, you can enable the \"version_error\" feature");
             }
             #[cfg(feature = "version_error")]
             return Err(ManifestError::InvalidMajor(major));
@@ -41,10 +43,8 @@ impl TryFrom<&[u8]> for FileHeader {
         if major == 2 && minor != 0 {
             #[cfg(not(feature = "version_error"))]
             {
-                println!(
-                    "Info: Invalid minor version. Parsing the manfiset will probably still work."
-                );
-                println!("If you want the crate to throw an error instead, you can enable the \"version_error\" feature");
+                info!("Invalid minor version. Parsing the manfiset will probably still work.");
+                info!("If you want the crate to throw an error instead, you can enable the \"version_error\" feature");
             }
             #[cfg(feature = "version_error")]
             return Err(ManifestError::InvalidMinor(minor));
@@ -54,7 +54,12 @@ impl TryFrom<&[u8]> for FileHeader {
 
         let offset = cursor.read_u32()?;
 
+        debug!("Attempting to convert \"bytes.len()\" into \"u32\".");
         let size: u32 = bytes.len().try_into()?;
+        debug!("Successfully converted \"bytes.len()\" into \"u32\".");
+
+        debug!("The file is {size} bytes in size");
+
         if offset < 28 || offset >= size {
             return Err(ManifestError::InvalidOffset(offset));
         }
