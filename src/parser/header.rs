@@ -1,7 +1,9 @@
-use crate::error::Error;
+use log::{debug, info, warn};
+
+use crate::error::ManifestError;
 use crate::structs::Cursor;
 
-#[derive(Clone, Copy, Debug, Default)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct FileHeader {
     pub magic: u32,
     pub major: u8,
@@ -14,7 +16,7 @@ pub struct FileHeader {
 }
 
 impl TryFrom<&[u8]> for FileHeader {
-    type Error = Error;
+    type Error = ManifestError;
 
     fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
         let mut cursor = Cursor::from(bytes);
@@ -23,59 +25,45 @@ impl TryFrom<&[u8]> for FileHeader {
         // N A M R (RMAN bacwards because I am reading this as an u32, instead
         // of as an array of chars)
         if magic != 0x4E414D52 {
-            return Err(Error::InvalidMagicBytes(magic));
+            return Err(ManifestError::InvalidMagicBytes(magic));
         }
 
         let major = cursor.read_u8()?;
         if major != 2 {
-            #[cfg(not(feature = "version_error"))]
-            {
-                println!("Warning: Invalid major version. Parsing the manfiset may not work.");
-                println!("If you want the crate to throw an error instead, you can enable the \"version_error\" feature");
-            }
+            warn!("Invalid major version. Parsing the manfiset may not work.");
+            info!("If you want the crate to throw an error instead, you can enable the \"version_error\" feature");
             #[cfg(feature = "version_error")]
-            return Err(Error::InvalidMajor(major));
+            return Err(ManifestError::InvalidMajor(major));
         }
 
         let minor = cursor.read_u8()?;
         if major == 2 && minor != 0 {
-            #[cfg(not(feature = "version_error"))]
-            {
-                println!(
-                    "Info: Invalid minor version. Parsing the manfiset will probably still work."
-                );
-                println!("If you want the crate to throw an error instead, you can enable the \"version_error\" feature");
-            }
+            info!("Invalid minor version. Parsing the manfiset will probably still work.");
+            info!("If you want the crate to throw an error instead, you can enable the \"version_error\" feature");
             #[cfg(feature = "version_error")]
-            return Err(Error::InvalidMinor(minor));
+            return Err(ManifestError::InvalidMinor(minor));
         }
 
         let flags = cursor.read_u16()?;
 
         let offset = cursor.read_u32()?;
 
-        let size: u32 = match bytes.len().try_into() {
-            Ok(result) => result,
-            Err(error) => {
-                let error = Error::ConversionFailure(
-                    String::from("usize"),
-                    String::from("u32"),
-                    error.into(),
-                );
-                return Err(error);
-            }
-        };
+        debug!("Attempting to convert \"bytes.len()\" into \"u32\".");
+        let size: u32 = bytes.len().try_into()?;
+        debug!("Successfully converted \"bytes.len()\" into \"u32\".");
+
+        debug!("The file is {size} bytes in size");
+
         if offset < 28 || offset >= size {
-            return Err(Error::InvalidOffset(size, offset));
+            return Err(ManifestError::InvalidOffset(offset));
         }
 
         let compressed_size = cursor.read_u32()?;
         if compressed_size > size - 28 {
-            return Err(Error::CompressedSizeTooLarge(size, compressed_size));
+            return Err(ManifestError::CompressedSizeTooLarge(compressed_size));
         }
         if compressed_size + offset > size {
-            return Err(Error::CompressedSizeTooLarge(
-                size,
+            return Err(ManifestError::CompressedSizeTooLarge(
                 compressed_size + offset,
             ));
         }

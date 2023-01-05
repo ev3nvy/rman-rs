@@ -1,88 +1,67 @@
 use std::fs;
-use std::io::{Read, Seek, SeekFrom};
-use std::path::{Path, PathBuf};
+use std::io::SeekFrom;
+use std::path::Path;
 
-use crate::error::{CursorError, Error};
+use log::debug;
+
+use crate::error::ManifestError;
 use crate::structs::Cursor;
 
 use super::{FileHeader, Manifest};
 
-#[derive(Debug)]
+#[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct ManifestFile {
-    pub file_header: FileHeader,
-    pub manifest: Manifest,
+    file_header: FileHeader,
+    manifest: Manifest,
 }
 
 impl ManifestFile {
-    pub fn new(file_header: FileHeader, manifest: Manifest) -> Self {
-        Self {
-            file_header,
-            manifest,
-        }
-    }
-
-    pub fn try_from_path<P>(path: P) -> Result<Self, Error>
+    pub fn try_from_path<P>(path: P) -> Result<Self, ManifestError>
     where
         P: AsRef<Path>,
     {
         let bytes = match fs::read(path) {
             Ok(result) => result,
-            Err(error) => return Err(Error::ReadFileError(error.into())),
+            Err(error) => return Err(ManifestError::ReadFileError(error)),
         };
         Self::try_from(&bytes[..])
     }
 }
 
+impl TryFrom<Vec<u8>> for ManifestFile {
+    type Error = ManifestError;
+
+    fn try_from(bytes: Vec<u8>) -> Result<Self, Self::Error> {
+        Self::try_from(&bytes[..])
+    }
+}
+
 impl TryFrom<&[u8]> for ManifestFile {
-    type Error = Error;
+    type Error = ManifestError;
 
     fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
         let file_header = FileHeader::try_from(bytes)?;
         let mut cursor = Cursor::from(bytes);
 
-        if let Err(error) = cursor
-            .cursor
-            .seek(SeekFrom::Start(file_header.offset.into()))
-        {
-            let cursor_error = CursorError::SeekError(error.into());
-            return Err(Error::CursorError(cursor_error));
-        }
+        cursor.seek(SeekFrom::Start(file_header.offset.into()))?;
 
-        let compressed_size: usize = match file_header.compressed_size.try_into() {
-            Ok(result) => result,
-            Err(error) => {
-                let error = Error::ConversionFailure(
-                    String::from("u32"),
-                    String::from("usize"),
-                    error.into(),
-                );
-                return Err(error);
-            }
-        };
+        debug!("Attempting to convert \"compressed_size\" into \"usize\".");
+        let compressed_size: usize = file_header.compressed_size.try_into()?;
+        debug!("Successfully converted \"compressed_size\" into \"usize\".");
+
         let mut buf = vec![0u8; compressed_size];
+        cursor.read_exact(&mut buf)?;
 
-        if let Err(error) = cursor.cursor.read_exact(&mut buf) {
-            let cursor_error = CursorError::ReadManyError(error.into());
-            return Err(Error::CursorError(cursor_error));
-        }
+        debug!("Attempting to convert \"uncompressed_size\" into \"usize\".");
+        let uncompressed_size: usize = file_header.uncompressed_size.try_into()?;
+        debug!("Successfully converted \"uncompressed_size\" into \"usize\".");
 
-        let uncompressed_size: usize = match file_header.uncompressed_size.try_into() {
-            Ok(result) => result,
-            Err(error) => {
-                let error = Error::ConversionFailure(
-                    String::from("u32"),
-                    String::from("usize"),
-                    error.into(),
-                );
-                return Err(error);
-            }
-        };
         let decompressed = match zstd::bulk::decompress(&buf, uncompressed_size) {
             Ok(result) => result,
-            Err(error) => return Err(Error::ZstdDecompressError(error.into())),
+            Err(error) => return Err(ManifestError::ZstdDecompressError(error)),
         };
 
-        let manifest = Manifest::try_from(&decompressed[..])?;
+        let manifest = Manifest::try_from(decompressed)?;
 
         Ok(Self {
             file_header,
@@ -91,26 +70,12 @@ impl TryFrom<&[u8]> for ManifestFile {
     }
 }
 
-impl TryFrom<Vec<u8>> for ManifestFile {
-    type Error = Error;
-
-    fn try_from(bytes: Vec<u8>) -> Result<Self, Self::Error> {
-        Self::try_from(&bytes[..])
+impl ManifestFile {
+    pub fn manifest_header(&self) -> &FileHeader {
+        &self.file_header
     }
-}
 
-impl TryFrom<String> for ManifestFile {
-    type Error = Error;
-
-    fn try_from(path: String) -> Result<Self, Self::Error> {
-        Self::try_from_path(path)
-    }
-}
-
-impl TryFrom<PathBuf> for ManifestFile {
-    type Error = Error;
-
-    fn try_from(path: PathBuf) -> Result<Self, Self::Error> {
-        Self::try_from_path(path)
+    pub fn manifest(&self) -> &Manifest {
+        &self.manifest
     }
 }

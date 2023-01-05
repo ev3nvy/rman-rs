@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-use std::io::Read;
+use std::io::{Read, Seek, SeekFrom};
 
 #[derive(Debug, Default)]
 pub struct Cursor<'a> {
@@ -25,17 +25,31 @@ impl<'a> From<std::io::Cursor<&'a [u8]>> for Cursor<'a> {
     }
 }
 
+impl<'a> Cursor<'a> {
+    pub fn seek(&mut self, style: SeekFrom) -> Result<u64, crate::error::CursorError> {
+        match self.cursor.seek(style) {
+            Ok(result) => Ok(result),
+            Err(error) => Err(crate::error::CursorError::SeekError(error)),
+        }
+    }
+
+    pub fn read_exact(&mut self, buf: &mut [u8]) -> Result<(), crate::error::CursorError> {
+        match self.cursor.read_exact(buf) {
+            Ok(result) => Ok(result),
+            Err(error) => Err(crate::error::CursorError::ReadExactError(error)),
+        }
+    }
+}
+
 macro_rules! read {
     ($type: ident, $read_type: ident) => {
         paste::item! {
             impl<'a> Cursor<'a> {
-                pub fn [<read_$type>](&mut self) -> Result<$type, crate::error::Error> {
+                pub fn [<read_$type>](&mut self) -> Result<$type, crate::error::CursorError> {
                     let mut buffer = [0u8; std::mem::size_of::<$type>()];
 
                     if let Err(error) = self.cursor.read_exact(&mut buffer) {
-                        let read_error = crate::error::ReadError::$read_type(error.into());
-                        let cursor_error = crate::error::CursorError::ReadError(read_error);
-                        return Err(crate::error::Error::CursorError(cursor_error));
+                        return Err(crate::error::ReadError::$read_type(error).into());
                     }
 
                     let result = $type::from_le_bytes(buffer);
