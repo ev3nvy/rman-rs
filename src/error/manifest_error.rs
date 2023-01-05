@@ -16,15 +16,10 @@ pub enum ManifestError<T = std::io::Error> {
     #[error("Unsupported minor version (expected: \"0\", was: \"{0}\").")]
     #[cfg(feature = "version_error")]
     InvalidMinor(u8),
-    #[error(
-        "Offset points outside of the file (file_size: \"{file_size}\", offset: \"{offset}\")."
-    )]
-    InvalidOffset { file_size: u32, offset: u32 },
-    #[error("Compressed size overflows the file (file_size: \"{file_size}\", compressed_size: \"{compressed_size}\").")]
-    CompressedSizeTooLarge {
-        file_size: u32,
-        compressed_size: u32,
-    },
+    #[error("Offset ({0}) is larger than the total file size.")]
+    InvalidOffset(u32),
+    #[error("Compressed size ({0}) is larger than the total file size.")]
+    CompressedSizeTooLarge(u32),
     #[error("Conversion failed. Error: {0}")]
     ConversionFailure(#[from] std::num::TryFromIntError),
     #[error("{0}")]

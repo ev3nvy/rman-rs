@@ -56,24 +56,17 @@ impl TryFrom<&[u8]> for FileHeader {
 
         let size: u32 = bytes.len().try_into()?;
         if offset < 28 || offset >= size {
-            return Err(ManifestError::InvalidOffset {
-                file_size: size,
-                offset,
-            });
+            return Err(ManifestError::InvalidOffset(offset));
         }
 
         let compressed_size = cursor.read_u32()?;
         if compressed_size > size - 28 {
-            return Err(ManifestError::CompressedSizeTooLarge {
-                file_size: size,
-                compressed_size,
-            });
+            return Err(ManifestError::CompressedSizeTooLarge(compressed_size));
         }
         if compressed_size + offset > size {
-            return Err(ManifestError::CompressedSizeTooLarge {
-                file_size: size,
-                compressed_size: compressed_size + offset,
-            });
+            return Err(ManifestError::CompressedSizeTooLarge(
+                compressed_size + offset,
+            ));
         }
 
         let manifest_id = cursor.read_u64()?;
