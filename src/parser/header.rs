@@ -1,7 +1,9 @@
+use std::io::Cursor;
+
+use byteorder::{ReadBytesExt, LE};
 use log::{debug, info, warn};
 
 use crate::error::ManifestError;
-use crate::structs::Cursor;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct FileHeader {
@@ -19,8 +21,8 @@ impl TryFrom<&[u8]> for FileHeader {
     type Error = ManifestError;
 
     fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
-        let mut cursor = Cursor::from(bytes);
-        let magic = cursor.read_u32()?;
+        let mut cursor = Cursor::new(bytes);
+        let magic = cursor.read_u32::<LE>()?;
 
         // N A M R (RMAN bacwards because I am reading this as an u32, instead
         // of as an array of chars)
@@ -44,9 +46,9 @@ impl TryFrom<&[u8]> for FileHeader {
             return Err(ManifestError::InvalidMinor(minor));
         }
 
-        let flags = cursor.read_u16()?;
+        let flags = cursor.read_u16::<LE>()?;
 
-        let offset = cursor.read_u32()?;
+        let offset = cursor.read_u32::<LE>()?;
 
         debug!("Attempting to convert \"bytes.len()\" into \"u32\".");
         let size: u32 = bytes.len().try_into()?;
@@ -58,7 +60,7 @@ impl TryFrom<&[u8]> for FileHeader {
             return Err(ManifestError::InvalidOffset(offset));
         }
 
-        let compressed_size = cursor.read_u32()?;
+        let compressed_size = cursor.read_u32::<LE>()?;
         if compressed_size > size - 28 {
             return Err(ManifestError::CompressedSizeTooLarge(compressed_size));
         }
@@ -68,8 +70,8 @@ impl TryFrom<&[u8]> for FileHeader {
             ));
         }
 
-        let manifest_id = cursor.read_u64()?;
-        let uncompressed_size = cursor.read_u32()?;
+        let manifest_id = cursor.read_u64::<LE>()?;
+        let uncompressed_size = cursor.read_u32::<LE>()?;
 
         let file_header = Self {
             magic,
