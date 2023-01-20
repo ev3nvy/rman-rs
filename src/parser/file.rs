@@ -1,5 +1,5 @@
 use std::fs;
-use std::io::{Cursor, SeekFrom, Seek, Read};
+use std::io::{Cursor, Read, Seek, SeekFrom};
 use std::path::Path;
 
 use log::debug;
