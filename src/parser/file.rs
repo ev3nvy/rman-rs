@@ -1,11 +1,10 @@
 use std::fs;
-use std::io::SeekFrom;
+use std::io::{Cursor, Read, Seek, SeekFrom};
 use std::path::Path;
 
 use log::debug;
 
 use crate::error::ManifestError;
-use crate::structs::Cursor;
 
 use super::{FileHeader, Manifest};
 
@@ -41,9 +40,11 @@ impl TryFrom<&[u8]> for ManifestFile {
 
     fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
         let file_header = FileHeader::try_from(bytes)?;
-        let mut cursor = Cursor::from(bytes);
+        let mut cursor = Cursor::new(bytes);
 
-        cursor.seek(SeekFrom::Start(file_header.offset.into()))?;
+        if let Err(error) = cursor.seek(SeekFrom::Start(file_header.offset.into())) {
+            return Err(ManifestError::SeekError(error));
+        };
 
         debug!("Attempting to convert \"compressed_size\" into \"usize\".");
         let compressed_size: usize = file_header.compressed_size.try_into()?;
