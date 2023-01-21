@@ -1,7 +1,13 @@
 [package]
-name = "rman-rs"
+name = "rman"
 version = "0.1.0"
+authors = ["ev3nvy"]
 edition = "2021"
+description = "Parser for Riot Manifest file format."
+repository = "https://github.com/ev3nvy/rman-rs"
+license = "MIT OR Apache-2.0"
+keywords = ["rman", "riot", "rito", "manifest", "riot-manifest"]
+categories = ["data-structures", "encoding", "parser-implementations"]
 
 [dependencies]
 byteorder = "1.4.3"

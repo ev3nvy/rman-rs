@@ -1,4 +1,4 @@
-use rman_rs::{Header, RiotManifest};
+use rman::{Header, RiotManifest};
 
 mod common;
 
