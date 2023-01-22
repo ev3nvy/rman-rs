@@ -2,6 +2,7 @@ use std::io::Error;
 
 use crate::generated::rman::Key;
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct KeyEntry {
     pub unk0: u16,

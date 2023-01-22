@@ -2,6 +2,7 @@ use std::io::Error;
 
 use crate::generated::rman::Param;
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct ParamEntry {
     pub unk0: u16,
