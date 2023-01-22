@@ -4,6 +4,7 @@ use crate::error::ManifestError;
 
 use super::file_entry::FileEntry;
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct File {
     pub id: u64,

@@ -2,6 +2,7 @@ use std::io::Error;
 
 use crate::generated::rman::Language;
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct LanguageEntry {
     pub id: u8,
