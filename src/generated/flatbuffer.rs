@@ -468,9 +468,9 @@ pub mod rman {
         pub const VT_UNK6: flatbuffers::VOffsetT = 16;
         pub const VT_CHUNK_IDS: flatbuffers::VOffsetT = 18;
         pub const VT_UNK8: flatbuffers::VOffsetT = 20;
-        pub const VT_LINK: flatbuffers::VOffsetT = 22;
+        pub const VT_SYMLINK: flatbuffers::VOffsetT = 22;
         pub const VT_UNK10: flatbuffers::VOffsetT = 24;
-        pub const VT_PARAMS_INDEX: flatbuffers::VOffsetT = 26;
+        pub const VT_PARAM_ID: flatbuffers::VOffsetT = 26;
         pub const VT_PERMISSIONS: flatbuffers::VOffsetT = 28;
 
         #[inline]
@@ -486,8 +486,8 @@ pub mod rman {
             builder.add_language_mask(args.language_mask);
             builder.add_directory_id(args.directory_id);
             builder.add_id(args.id);
-            if let Some(x) = args.link {
-                builder.add_link(x);
+            if let Some(x) = args.symlink {
+                builder.add_symlink(x);
             }
             if let Some(x) = args.chunk_ids {
                 builder.add_chunk_ids(x);
@@ -498,7 +498,7 @@ pub mod rman {
             builder.add_size_(args.size_);
             builder.add_unk10(args.unk10);
             builder.add_permissions(args.permissions);
-            builder.add_params_index(args.params_index);
+            builder.add_param_id(args.param_id);
             builder.add_unk8(args.unk8);
             builder.add_unk6(args.unk6);
             builder.add_unk5(args.unk5);
@@ -586,13 +586,13 @@ pub mod rman {
             unsafe { self._tab.get::<u8>(File::VT_UNK8, Some(0)).unwrap() }
         }
         #[inline]
-        pub fn link(&self) -> Option<&'a str> {
+        pub fn symlink(&self) -> Option<&'a str> {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
             unsafe {
                 self._tab
-                    .get::<flatbuffers::ForwardsUOffset<&str>>(File::VT_LINK, None)
+                    .get::<flatbuffers::ForwardsUOffset<&str>>(File::VT_SYMLINK, None)
             }
         }
         #[inline]
@@ -603,11 +603,11 @@ pub mod rman {
             unsafe { self._tab.get::<u16>(File::VT_UNK10, Some(0)).unwrap() }
         }
         #[inline]
-        pub fn params_index(&self) -> u8 {
+        pub fn param_id(&self) -> u8 {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
-            unsafe { self._tab.get::<u8>(File::VT_PARAMS_INDEX, Some(0)).unwrap() }
+            unsafe { self._tab.get::<u8>(File::VT_PARAM_ID, Some(0)).unwrap() }
         }
         #[inline]
         pub fn permissions(&self) -> u8 {
@@ -639,9 +639,13 @@ pub mod rman {
                     false,
                 )?
                 .visit_field::<u8>("unk8", Self::VT_UNK8, false)?
-                .visit_field::<flatbuffers::ForwardsUOffset<&str>>("link", Self::VT_LINK, false)?
+                .visit_field::<flatbuffers::ForwardsUOffset<&str>>(
+                    "symlink",
+                    Self::VT_SYMLINK,
+                    false,
+                )?
                 .visit_field::<u16>("unk10", Self::VT_UNK10, false)?
-                .visit_field::<u8>("params_index", Self::VT_PARAMS_INDEX, false)?
+                .visit_field::<u8>("param_id", Self::VT_PARAM_ID, false)?
                 .visit_field::<u8>("permissions", Self::VT_PERMISSIONS, false)?
                 .finish();
             Ok(())
@@ -657,9 +661,9 @@ pub mod rman {
         pub unk6: u8,
         pub chunk_ids: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, u64>>>,
         pub unk8: u8,
-        pub link: Option<flatbuffers::WIPOffset<&'a str>>,
+        pub symlink: Option<flatbuffers::WIPOffset<&'a str>>,
         pub unk10: u16,
-        pub params_index: u8,
+        pub param_id: u8,
         pub permissions: u8,
     }
     impl<'a> Default for FileArgs<'a> {
@@ -675,9 +679,9 @@ pub mod rman {
                 unk6: 0,
                 chunk_ids: None,
                 unk8: 0,
-                link: None,
+                symlink: None,
                 unk10: 0,
-                params_index: 0,
+                param_id: 0,
                 permissions: 0,
             }
         }
@@ -732,18 +736,17 @@ pub mod rman {
             self.fbb_.push_slot::<u8>(File::VT_UNK8, unk8, 0);
         }
         #[inline]
-        pub fn add_link(&mut self, link: flatbuffers::WIPOffset<&'b str>) {
+        pub fn add_symlink(&mut self, symlink: flatbuffers::WIPOffset<&'b str>) {
             self.fbb_
-                .push_slot_always::<flatbuffers::WIPOffset<_>>(File::VT_LINK, link);
+                .push_slot_always::<flatbuffers::WIPOffset<_>>(File::VT_SYMLINK, symlink);
         }
         #[inline]
         pub fn add_unk10(&mut self, unk10: u16) {
             self.fbb_.push_slot::<u16>(File::VT_UNK10, unk10, 0);
         }
         #[inline]
-        pub fn add_params_index(&mut self, params_index: u8) {
-            self.fbb_
-                .push_slot::<u8>(File::VT_PARAMS_INDEX, params_index, 0);
+        pub fn add_param_id(&mut self, param_id: u8) {
+            self.fbb_.push_slot::<u8>(File::VT_PARAM_ID, param_id, 0);
         }
         #[inline]
         pub fn add_permissions(&mut self, permissions: u8) {
@@ -777,9 +780,9 @@ pub mod rman {
             ds.field("unk6", &self.unk6());
             ds.field("chunk_ids", &self.chunk_ids());
             ds.field("unk8", &self.unk8());
-            ds.field("link", &self.link());
+            ds.field("symlink", &self.symlink());
             ds.field("unk10", &self.unk10());
-            ds.field("params_index", &self.params_index());
+            ds.field("param_id", &self.param_id());
             ds.field("permissions", &self.permissions());
             ds.finish()
         }
@@ -1337,10 +1340,10 @@ pub mod rman {
 
     impl<'a> Param<'a> {
         pub const VT_UNK0: flatbuffers::VOffsetT = 4;
-        pub const VT_HASH_TYPE: flatbuffers::VOffsetT = 6;
-        pub const VT_UNK2: flatbuffers::VOffsetT = 8;
-        pub const VT_UNK3: flatbuffers::VOffsetT = 10;
-        pub const VT_MAX_UNCOMPRESSED: flatbuffers::VOffsetT = 12;
+        pub const VT_CHUNKING_VERSION: flatbuffers::VOffsetT = 6;
+        pub const VT_MIN_CHUNK_SIZE: flatbuffers::VOffsetT = 8;
+        pub const VT_CHUNK_SIZE: flatbuffers::VOffsetT = 10;
+        pub const VT_MAX_CHUNK_SIZE: flatbuffers::VOffsetT = 12;
 
         #[inline]
         pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -1352,11 +1355,11 @@ pub mod rman {
             args: &'args ParamArgs,
         ) -> flatbuffers::WIPOffset<Param<'bldr>> {
             let mut builder = ParamBuilder::new(_fbb);
-            builder.add_max_uncompressed(args.max_uncompressed);
-            builder.add_unk3(args.unk3);
-            builder.add_unk2(args.unk2);
+            builder.add_max_chunk_size(args.max_chunk_size);
+            builder.add_chunk_size(args.chunk_size);
+            builder.add_min_chunk_size(args.min_chunk_size);
             builder.add_unk0(args.unk0);
-            builder.add_hash_type(args.hash_type);
+            builder.add_chunking_version(args.chunking_version);
             builder.finish()
         }
 
@@ -1368,34 +1371,42 @@ pub mod rman {
             unsafe { self._tab.get::<u16>(Param::VT_UNK0, Some(0)).unwrap() }
         }
         #[inline]
-        pub fn hash_type(&self) -> u8 {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<u8>(Param::VT_HASH_TYPE, Some(0)).unwrap() }
-        }
-        #[inline]
-        pub fn unk2(&self) -> u32 {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<u32>(Param::VT_UNK2, Some(0)).unwrap() }
-        }
-        #[inline]
-        pub fn unk3(&self) -> u32 {
-            // Safety:
-            // Created from valid Table for this object
-            // which contains a valid value in this slot
-            unsafe { self._tab.get::<u32>(Param::VT_UNK3, Some(0)).unwrap() }
-        }
-        #[inline]
-        pub fn max_uncompressed(&self) -> u32 {
+        pub fn chunking_version(&self) -> u8 {
             // Safety:
             // Created from valid Table for this object
             // which contains a valid value in this slot
             unsafe {
                 self._tab
-                    .get::<u32>(Param::VT_MAX_UNCOMPRESSED, Some(0))
+                    .get::<u8>(Param::VT_CHUNKING_VERSION, Some(0))
+                    .unwrap()
+            }
+        }
+        #[inline]
+        pub fn min_chunk_size(&self) -> u32 {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe {
+                self._tab
+                    .get::<u32>(Param::VT_MIN_CHUNK_SIZE, Some(0))
+                    .unwrap()
+            }
+        }
+        #[inline]
+        pub fn chunk_size(&self) -> u32 {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe { self._tab.get::<u32>(Param::VT_CHUNK_SIZE, Some(0)).unwrap() }
+        }
+        #[inline]
+        pub fn max_chunk_size(&self) -> u32 {
+            // Safety:
+            // Created from valid Table for this object
+            // which contains a valid value in this slot
+            unsafe {
+                self._tab
+                    .get::<u32>(Param::VT_MAX_CHUNK_SIZE, Some(0))
                     .unwrap()
             }
         }
@@ -1410,30 +1421,30 @@ pub mod rman {
             use self::flatbuffers::Verifiable;
             v.visit_table(pos)?
                 .visit_field::<u16>("unk0", Self::VT_UNK0, false)?
-                .visit_field::<u8>("hash_type", Self::VT_HASH_TYPE, false)?
-                .visit_field::<u32>("unk2", Self::VT_UNK2, false)?
-                .visit_field::<u32>("unk3", Self::VT_UNK3, false)?
-                .visit_field::<u32>("max_uncompressed", Self::VT_MAX_UNCOMPRESSED, false)?
+                .visit_field::<u8>("chunking_version", Self::VT_CHUNKING_VERSION, false)?
+                .visit_field::<u32>("min_chunk_size", Self::VT_MIN_CHUNK_SIZE, false)?
+                .visit_field::<u32>("chunk_size", Self::VT_CHUNK_SIZE, false)?
+                .visit_field::<u32>("max_chunk_size", Self::VT_MAX_CHUNK_SIZE, false)?
                 .finish();
             Ok(())
         }
     }
     pub struct ParamArgs {
         pub unk0: u16,
-        pub hash_type: u8,
-        pub unk2: u32,
-        pub unk3: u32,
-        pub max_uncompressed: u32,
+        pub chunking_version: u8,
+        pub min_chunk_size: u32,
+        pub chunk_size: u32,
+        pub max_chunk_size: u32,
     }
     impl<'a> Default for ParamArgs {
         #[inline]
         fn default() -> Self {
             ParamArgs {
                 unk0: 0,
-                hash_type: 0,
-                unk2: 0,
-                unk3: 0,
-                max_uncompressed: 0,
+                chunking_version: 0,
+                min_chunk_size: 0,
+                chunk_size: 0,
+                max_chunk_size: 0,
             }
         }
     }
@@ -1448,21 +1459,24 @@ pub mod rman {
             self.fbb_.push_slot::<u16>(Param::VT_UNK0, unk0, 0);
         }
         #[inline]
-        pub fn add_hash_type(&mut self, hash_type: u8) {
-            self.fbb_.push_slot::<u8>(Param::VT_HASH_TYPE, hash_type, 0);
-        }
-        #[inline]
-        pub fn add_unk2(&mut self, unk2: u32) {
-            self.fbb_.push_slot::<u32>(Param::VT_UNK2, unk2, 0);
-        }
-        #[inline]
-        pub fn add_unk3(&mut self, unk3: u32) {
-            self.fbb_.push_slot::<u32>(Param::VT_UNK3, unk3, 0);
-        }
-        #[inline]
-        pub fn add_max_uncompressed(&mut self, max_uncompressed: u32) {
+        pub fn add_chunking_version(&mut self, chunking_version: u8) {
             self.fbb_
-                .push_slot::<u32>(Param::VT_MAX_UNCOMPRESSED, max_uncompressed, 0);
+                .push_slot::<u8>(Param::VT_CHUNKING_VERSION, chunking_version, 0);
+        }
+        #[inline]
+        pub fn add_min_chunk_size(&mut self, min_chunk_size: u32) {
+            self.fbb_
+                .push_slot::<u32>(Param::VT_MIN_CHUNK_SIZE, min_chunk_size, 0);
+        }
+        #[inline]
+        pub fn add_chunk_size(&mut self, chunk_size: u32) {
+            self.fbb_
+                .push_slot::<u32>(Param::VT_CHUNK_SIZE, chunk_size, 0);
+        }
+        #[inline]
+        pub fn add_max_chunk_size(&mut self, max_chunk_size: u32) {
+            self.fbb_
+                .push_slot::<u32>(Param::VT_MAX_CHUNK_SIZE, max_chunk_size, 0);
         }
         #[inline]
         pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a>) -> ParamBuilder<'a, 'b> {
@@ -1483,10 +1497,10 @@ pub mod rman {
         fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
             let mut ds = f.debug_struct("Param");
             ds.field("unk0", &self.unk0());
-            ds.field("hash_type", &self.hash_type());
-            ds.field("unk2", &self.unk2());
-            ds.field("unk3", &self.unk3());
-            ds.field("max_uncompressed", &self.max_uncompressed());
+            ds.field("chunking_version", &self.chunking_version());
+            ds.field("min_chunk_size", &self.min_chunk_size());
+            ds.field("chunk_size", &self.chunk_size());
+            ds.field("max_chunk_size", &self.max_chunk_size());
             ds.finish()
         }
     }
