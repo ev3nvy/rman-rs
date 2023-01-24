@@ -6,10 +6,10 @@ use crate::generated::rman::Param;
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct ParamEntry {
     pub unk0: u16,
-    pub hash_type: u8,
-    pub unk2: u32,
-    pub unk3: u32,
-    pub max_uncompressed: u32,
+    pub chunking_version: u8,
+    pub min_chunk_size: u32,
+    pub chunk_size: u32,
+    pub max_chunk_size: u32,
 }
 
 impl TryFrom<Param<'_>> for ParamEntry {
@@ -17,17 +17,17 @@ impl TryFrom<Param<'_>> for ParamEntry {
 
     fn try_from(param: Param) -> Result<Self, Self::Error> {
         let unk0 = param.unk0();
-        let hash_type = param.hash_type();
-        let unk2 = param.unk2();
-        let unk3 = param.unk3();
-        let max_uncompressed = param.max_uncompressed();
+        let chunking_version = param.chunking_version();
+        let min_chunk_size = param.min_chunk_size();
+        let chunk_size = param.chunk_size();
+        let max_chunk_size = param.max_chunk_size();
 
         Ok(Self {
             unk0,
-            hash_type,
-            unk2,
-            unk3,
-            max_uncompressed,
+            chunking_version,
+            min_chunk_size,
+            chunk_size,
+            max_chunk_size,
         })
     }
 }
