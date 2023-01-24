@@ -12,6 +12,10 @@ serde = { version = "1.0.152", features = ["derive"], optional = true }
 thiserror = "1.0.38"
 zstd = "0.12.1"
 
+[build-dependencies]
+flatbuffers = "22.10.26"
+zstd = "0.12.1"
+
 [features]
 default = []
 version_error = []
