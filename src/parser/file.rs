@@ -86,8 +86,8 @@ mod tests {
     use super::*;
 
     mod helpers {
-        pub const VALID_FILE: &str = "assets/valid.manifest";
-        pub const VALID_EMPTY_FILE: &str = "assets/valid_empty.manifest";
+        pub const VALID_FILE: &str = concat!(env!("OUT_DIR"), "/valid.manifest");
+        pub const VALID_EMPTY_FILE: &str = concat!(env!("OUT_DIR"), "/valid_empty.manifest");
     }
 
     #[test]

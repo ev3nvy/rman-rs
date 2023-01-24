@@ -3,8 +3,9 @@
 #[path = "./src/generated/flatbuffer.rs"]
 mod flatbuffer;
 
-use std::fs;
 use std::io::{Error, Write};
+use std::path::Path;
+use std::{env, fs};
 
 use flatbuffer::rman::{Bundle, BundleArgs};
 use flatbuffer::rman::{Chunk, ChunkArgs};
@@ -50,7 +51,9 @@ fn write_file(bytes: &[u8], name: String) -> Result<(), Error> {
 
     let bytes = [&head[..], &compressed[..]].concat();
 
-    let mut file = fs::File::create(format!("./assets/{name}.manifest"))?;
+    let out_dir = env::var_os("OUT_DIR").unwrap();
+    let path = Path::new(&out_dir).join(format!("{name}.manifest"));
+    let mut file = fs::File::create(path)?;
     file.write_all(&bytes);
 
     Ok(())
@@ -189,8 +192,6 @@ fn valid_empty_manifest() -> Vec<u8> {
 }
 
 fn main() -> Result<(), Error> {
-    fs::create_dir_all("./assets")?;
-
     write_file(&valid_manifest(), "valid".to_owned()).unwrap();
     write_file(&valid_empty_manifest(), "valid_empty".to_owned()).unwrap();
 
