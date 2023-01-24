@@ -14,9 +14,9 @@ pub struct FileEntry {
     pub unk6: u8,
     pub chunk_ids: Vec<u64>,
     pub unk8: u8,
-    pub link: String,
+    pub symlink: String,
     pub unk10: u16,
-    pub params_index: u8,
+    pub param_id: u8,
     pub permissions: u8,
 }
 
@@ -33,9 +33,9 @@ impl TryFrom<File<'_>> for FileEntry {
         let unk6 = file.unk6();
         let chunk_ids = file.chunk_ids().unwrap_or_default();
         let unk8 = file.unk8();
-        let link = file.link().unwrap_or_default().to_string();
+        let symlink = file.symlink().unwrap_or_default().to_string();
         let unk10 = file.unk10();
-        let params_index = file.params_index();
+        let param_id = file.param_id();
         let permissions = file.permissions();
 
         let chunk_ids = chunk_ids.iter().collect();
@@ -50,9 +50,9 @@ impl TryFrom<File<'_>> for FileEntry {
             unk6,
             chunk_ids,
             unk8,
-            link,
+            symlink,
             unk10,
-            params_index,
+            param_id,
             permissions,
         })
     }

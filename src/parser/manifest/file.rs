@@ -12,7 +12,7 @@ pub struct File {
     pub permissions: u8,
     pub size: u32,
     pub path: String,
-    pub link: String,
+    pub symlink: String,
     pub languages: Vec<String>,
     #[allow(dead_code)]
     chunks: Vec<(u64, u64, u32, u32)>,
@@ -29,7 +29,7 @@ impl File {
         let name = file.name.to_string();
         let permissions = file.permissions;
         let size = file.size;
-        let link = file.link.to_string();
+        let symlink = file.symlink.to_string();
         let language_mask = file.language_mask;
         let chunk_ids = file.chunk_ids.clone();
 
@@ -69,7 +69,7 @@ impl File {
             permissions,
             size,
             path,
-            link,
+            symlink,
             languages,
             chunks,
         };
