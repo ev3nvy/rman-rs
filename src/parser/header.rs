@@ -91,7 +91,7 @@ impl Header {
 
         // N A M R (RMAN bacwards because I am reading this as an u32, instead
         // of as an array of chars)
-        if magic != 0x4E414D52 {
+        if magic != 0x4E_41_4D_52 {
             return Err(ManifestError::InvalidMagicBytes(magic));
         }
 
