@@ -14,8 +14,8 @@ use crate::error::ManifestError;
 
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct RiotManifest {
-    file_header: Header,
-    manifest: ManifestData,
+    pub header: Header,
+    pub data: ManifestData,
 }
 
 impl RiotManifest {
@@ -43,22 +43,22 @@ impl TryFrom<&[u8]> for RiotManifest {
     type Error = ManifestError;
 
     fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
-        let file_header = Header::try_from(bytes)?;
+        let header = Header::try_from(bytes)?;
         let mut cursor = Cursor::new(bytes);
 
-        if let Err(error) = cursor.seek(SeekFrom::Start(file_header.offset.into())) {
+        if let Err(error) = cursor.seek(SeekFrom::Start(header.offset.into())) {
             return Err(ManifestError::SeekError(error));
         };
 
         debug!("Attempting to convert \"compressed_size\" into \"usize\".");
-        let compressed_size: usize = file_header.compressed_size.try_into()?;
+        let compressed_size: usize = header.compressed_size.try_into()?;
         debug!("Successfully converted \"compressed_size\" into \"usize\".");
 
         let mut buf = vec![0u8; compressed_size];
         cursor.read_exact(&mut buf)?;
 
         debug!("Attempting to convert \"uncompressed_size\" into \"usize\".");
-        let uncompressed_size: usize = file_header.uncompressed_size.try_into()?;
+        let uncompressed_size: usize = header.uncompressed_size.try_into()?;
         debug!("Successfully converted \"uncompressed_size\" into \"usize\".");
 
         let decompressed = match zstd::bulk::decompress(&buf, uncompressed_size) {
@@ -66,21 +66,8 @@ impl TryFrom<&[u8]> for RiotManifest {
             Err(error) => return Err(ManifestError::ZstdDecompressError(error)),
         };
 
-        let manifest = ManifestData::try_from(decompressed)?;
+        let data = ManifestData::try_from(decompressed)?;
 
-        Ok(Self {
-            file_header,
-            manifest,
-        })
-    }
-}
-
-impl RiotManifest {
-    pub fn manifest_header(&self) -> &Header {
-        &self.file_header
-    }
-
-    pub fn manifest(&self) -> &ManifestData {
-        &self.manifest
+        Ok(Self { header, data })
     }
 }

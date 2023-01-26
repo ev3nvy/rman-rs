@@ -34,47 +34,42 @@ pub fn should_have_correct_values_when_valid_manifest() {
     };
 
     assert_eq!(
-        manifest.manifest_header(),
-        &header,
+        &manifest.header, &header,
         "manifest header should be the same"
     );
     assert_eq!(
-        manifest.manifest().bundle_entries.len(),
+        manifest.data.bundle_entries.len(),
         1,
         "should have 1 bundle entry"
     );
     assert_eq!(
-        manifest.manifest().bundle_entries[0].chunks.len(),
+        manifest.data.bundle_entries[0].chunks.len(),
         2,
         "bundle entry should have 2 chunks"
     );
     assert_eq!(
-        manifest.manifest().directory_entries.len(),
+        manifest.data.directory_entries.len(),
         2,
         "should have 2 directory entries"
     );
     assert_eq!(
-        manifest.manifest().file_entries.len(),
+        manifest.data.file_entries.len(),
         1,
         "should have 1 file entry"
     );
+    assert_eq!(manifest.data.files.len(), 1, "should parse into 1 file");
     assert_eq!(
-        manifest.manifest().files.len(),
-        1,
-        "should parse into 1 file"
-    );
-    assert_eq!(
-        manifest.manifest().key_entries.len(),
+        manifest.data.key_entries.len(),
         1,
         "should have 1 key entry"
     );
     assert_eq!(
-        manifest.manifest().language_entries.len(),
+        manifest.data.language_entries.len(),
         1,
         "should have 1 language entries"
     );
     assert_eq!(
-        manifest.manifest().param_entries.len(),
+        manifest.data.param_entries.len(),
         1,
         "should have 1 param entry"
     );
@@ -112,42 +107,37 @@ pub fn should_have_correct_values_when_valid_empty_manifest() {
     };
 
     assert_eq!(
-        manifest.manifest_header(),
-        &header,
+        &manifest.header, &header,
         "manifest header should be the same"
     );
     assert_eq!(
-        manifest.manifest().bundle_entries.len(),
+        manifest.data.bundle_entries.len(),
         0,
         "should have 0 bundle entries"
     );
     assert_eq!(
-        manifest.manifest().directory_entries.len(),
+        manifest.data.directory_entries.len(),
         0,
         "should have 0 directory entries"
     );
     assert_eq!(
-        manifest.manifest().file_entries.len(),
+        manifest.data.file_entries.len(),
         0,
         "should have 0 file entries"
     );
+    assert_eq!(manifest.data.files.len(), 0, "should parse into 0 files");
     assert_eq!(
-        manifest.manifest().files.len(),
-        0,
-        "should parse into 0 files"
-    );
-    assert_eq!(
-        manifest.manifest().key_entries.len(),
+        manifest.data.key_entries.len(),
         0,
         "should have 0 key entries"
     );
     assert_eq!(
-        manifest.manifest().language_entries.len(),
+        manifest.data.language_entries.len(),
         0,
         "should have 0 language entries"
     );
     assert_eq!(
-        manifest.manifest().param_entries.len(),
+        manifest.data.param_entries.len(),
         0,
         "should have 0 param entries"
     );
