@@ -9,7 +9,7 @@ use crate::generated::rman::root_as_manifest;
 pub use self::file::File;
 
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
-pub struct Manifest {
+pub struct ManifestData {
     pub bundle_entries: Vec<BundleEntry>,
     pub directory_entries: Vec<DirectoryEntry>,
     pub file_entries: Vec<FileEntry>,
@@ -30,7 +30,7 @@ macro_rules! map_vector {
     };
 }
 
-impl TryFrom<Vec<u8>> for Manifest {
+impl TryFrom<Vec<u8>> for ManifestData {
     type Error = ManifestError;
 
     fn try_from(bytes: Vec<u8>) -> Result<Self, Self::Error> {
@@ -66,7 +66,7 @@ impl TryFrom<Vec<u8>> for Manifest {
     }
 }
 
-impl Manifest {
+impl ManifestData {
     fn try_map_languages(language_entries: &[LanguageEntry]) -> HashMap<u8, String> {
         language_entries
             .iter()

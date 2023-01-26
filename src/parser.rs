@@ -2,7 +2,7 @@ pub mod header;
 pub mod manifest;
 
 pub use header::Header;
-pub use manifest::{File, Manifest};
+pub use manifest::{File, ManifestData};
 
 use std::fs;
 use std::io::{Cursor, Read, Seek, SeekFrom};
@@ -15,7 +15,7 @@ use crate::error::ManifestError;
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct RiotManifest {
     file_header: Header,
-    manifest: Manifest,
+    manifest: ManifestData,
 }
 
 impl RiotManifest {
@@ -66,7 +66,7 @@ impl TryFrom<&[u8]> for RiotManifest {
             Err(error) => return Err(ManifestError::ZstdDecompressError(error)),
         };
 
-        let manifest = Manifest::try_from(decompressed)?;
+        let manifest = ManifestData::try_from(decompressed)?;
 
         Ok(Self {
             file_header,
@@ -80,7 +80,7 @@ impl RiotManifest {
         &self.file_header
     }
 
-    pub fn manifest(&self) -> &Manifest {
+    pub fn manifest(&self) -> &ManifestData {
         &self.manifest
     }
 }
