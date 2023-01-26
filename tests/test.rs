@@ -1,4 +1,4 @@
-use rman_rs::{FileHeader, ManifestFile};
+use rman_rs::{Header, ManifestFile};
 
 mod common;
 
@@ -22,7 +22,7 @@ pub fn should_have_correct_values_when_valid_manifest() {
 
     // FIXME: don't check for equality on compressed size and uncompressed size
     // compressed and uncompressed size could change in the future
-    let header = FileHeader {
+    let header = Header {
         magic: 0x4E414D52,
         major: 2,
         minor: 0,
@@ -100,7 +100,7 @@ pub fn should_have_correct_values_when_valid_empty_manifest() {
 
     // FIXME: don't check for equality on compressed size and uncompressed size
     // compressed and uncompressed size could change in the future
-    let header = FileHeader {
+    let header = Header {
         magic: 0x4E414D52,
         major: 2,
         minor: 0,

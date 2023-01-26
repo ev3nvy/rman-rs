@@ -6,11 +6,11 @@ use log::debug;
 
 use crate::error::ManifestError;
 
-use super::{FileHeader, Manifest};
+use super::{Header, Manifest};
 
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct ManifestFile {
-    file_header: FileHeader,
+    file_header: Header,
     manifest: Manifest,
 }
 
@@ -39,7 +39,7 @@ impl TryFrom<&[u8]> for ManifestFile {
     type Error = ManifestError;
 
     fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
-        let file_header = FileHeader::try_from(bytes)?;
+        let file_header = Header::try_from(bytes)?;
         let mut cursor = Cursor::new(bytes);
 
         if let Err(error) = cursor.seek(SeekFrom::Start(file_header.offset.into())) {
@@ -72,7 +72,7 @@ impl TryFrom<&[u8]> for ManifestFile {
 }
 
 impl ManifestFile {
-    pub fn manifest_header(&self) -> &FileHeader {
+    pub fn manifest_header(&self) -> &Header {
         &self.file_header
     }
 
