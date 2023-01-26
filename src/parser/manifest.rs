@@ -1,12 +1,9 @@
-mod file;
-
 use std::collections::HashMap;
 
 use crate::entries::{BundleEntry, DirectoryEntry, FileEntry, KeyEntry, LanguageEntry, ParamEntry};
 use crate::error::ManifestError;
 use crate::generated::rman::root_as_manifest;
-
-pub use self::file::File;
+use crate::File;
 
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct ManifestData {

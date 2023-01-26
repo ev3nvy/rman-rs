@@ -3,6 +3,7 @@
 
 pub mod entries;
 pub mod error;
+mod file;
 mod parser;
 
 mod generated {
@@ -11,4 +12,5 @@ mod generated {
     include!(concat!(env!("OUT_DIR"), "/schema_generated.rs"));
 }
 
-pub use parser::{File, Header, ManifestData, RiotManifest};
+pub use file::File;
+pub use parser::{Header, ManifestData, RiotManifest};
