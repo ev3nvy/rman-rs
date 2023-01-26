@@ -9,12 +9,12 @@ use crate::error::ManifestError;
 use super::{Header, Manifest};
 
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
-pub struct ManifestFile {
+pub struct RiotManifest {
     file_header: Header,
     manifest: Manifest,
 }
 
-impl ManifestFile {
+impl RiotManifest {
     pub fn try_from_path<P>(path: P) -> Result<Self, ManifestError>
     where
         P: AsRef<Path>,
@@ -27,7 +27,7 @@ impl ManifestFile {
     }
 }
 
-impl TryFrom<Vec<u8>> for ManifestFile {
+impl TryFrom<Vec<u8>> for RiotManifest {
     type Error = ManifestError;
 
     fn try_from(bytes: Vec<u8>) -> Result<Self, Self::Error> {
@@ -35,7 +35,7 @@ impl TryFrom<Vec<u8>> for ManifestFile {
     }
 }
 
-impl TryFrom<&[u8]> for ManifestFile {
+impl TryFrom<&[u8]> for RiotManifest {
     type Error = ManifestError;
 
     fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
@@ -71,7 +71,7 @@ impl TryFrom<&[u8]> for ManifestFile {
     }
 }
 
-impl ManifestFile {
+impl RiotManifest {
     pub fn manifest_header(&self) -> &Header {
         &self.file_header
     }

@@ -1,4 +1,4 @@
-use rman_rs::{Header, ManifestFile};
+use rman_rs::{Header, RiotManifest};
 
 mod common;
 
@@ -6,7 +6,7 @@ mod common;
 pub fn should_parse_from_path_when_valid_manifest() {
     let valid_file = common::ValidManifest::new();
     valid_file.generate();
-    if let Err(error) = ManifestFile::try_from_path(valid_file.path()) {
+    if let Err(error) = RiotManifest::try_from_path(valid_file.path()) {
         panic!(
             "there was an error when trying to parse the manifest, manifest: {:?}",
             error
@@ -18,7 +18,7 @@ pub fn should_parse_from_path_when_valid_manifest() {
 pub fn should_have_correct_values_when_valid_manifest() {
     let valid_file = common::ValidManifest::new();
     valid_file.generate();
-    let manifest = ManifestFile::try_from_path(valid_file.path()).unwrap();
+    let manifest = RiotManifest::try_from_path(valid_file.path()).unwrap();
 
     // FIXME: don't check for equality on compressed size and uncompressed size
     // compressed and uncompressed size could change in the future
@@ -84,7 +84,7 @@ pub fn should_have_correct_values_when_valid_manifest() {
 pub fn should_parse_from_path_when_valid_empty_manifest() {
     let valid_empty_file = common::ValidEmptyManifest::new();
     valid_empty_file.generate();
-    if let Err(error) = ManifestFile::try_from_path(valid_empty_file.path()) {
+    if let Err(error) = RiotManifest::try_from_path(valid_empty_file.path()) {
         panic!(
             "there was an error when trying to parse the manifest, manifest: {:?}",
             error
@@ -96,7 +96,7 @@ pub fn should_parse_from_path_when_valid_empty_manifest() {
 pub fn should_have_correct_values_when_valid_empty_manifest() {
     let valid_empty_file = common::ValidEmptyManifest::new();
     valid_empty_file.generate();
-    let manifest = ManifestFile::try_from_path(valid_empty_file.path()).unwrap();
+    let manifest = RiotManifest::try_from_path(valid_empty_file.path()).unwrap();
 
     // FIXME: don't check for equality on compressed size and uncompressed size
     // compressed and uncompressed size could change in the future

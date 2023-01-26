@@ -11,4 +11,4 @@ mod generated {
     include!(concat!(env!("OUT_DIR"), "/schema_generated.rs"));
 }
 
-pub use parser::{File, Header, Manifest, ManifestFile};
+pub use parser::{File, Header, Manifest, RiotManifest};
