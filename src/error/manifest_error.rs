@@ -1,9 +1,9 @@
 use thiserror::Error;
 
 #[derive(Error, Debug)]
-pub enum ManifestError<T = std::io::Error> {
+pub enum ManifestError {
     #[error("Failed reading file: {0}")]
-    ReadFileError(T),
+    ReadFileError(std::io::Error),
     #[error("Could not read value from buffer. Error: {0}")]
     ReadBytesError(#[from] std::io::Error),
     #[error("Could not seek to desired position. Error: {0}")]
@@ -23,7 +23,7 @@ pub enum ManifestError<T = std::io::Error> {
     #[error("Conversion failed. Error: {0}")]
     ConversionFailure(#[from] std::num::TryFromIntError),
     #[error("{0}")]
-    ZstdDecompressError(T),
+    ZstdDecompressError(std::io::Error),
     #[error("{0}")]
-    FlatbufferError(T),
+    FlatbufferError(std::io::Error),
 }
