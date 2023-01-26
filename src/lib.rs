@@ -3,7 +3,12 @@
 
 pub mod entries;
 pub mod error;
-mod generated;
 mod parser;
+
+mod generated {
+    #![allow(clippy::all, clippy::pedantic, clippy::nursery)]
+    #![allow(missing_debug_implementations, unused_imports)]
+    include!(concat!(env!("OUT_DIR"), "/schema_generated.rs"));
+}
 
 pub use parser::{File, FileHeader, Manifest, ManifestFile};
