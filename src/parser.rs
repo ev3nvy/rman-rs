@@ -1,8 +1,8 @@
 pub mod header;
 pub mod manifest;
 
-pub use header::Header;
-pub use manifest::ManifestData;
+use header::Header;
+use manifest::ManifestData;
 
 use std::fs;
 use std::io::{Cursor, Read, Seek, SeekFrom};

@@ -12,5 +12,7 @@ mod generated {
     include!(concat!(env!("OUT_DIR"), "/schema_generated.rs"));
 }
 
-pub use file::File;
-pub use parser::{Header, ManifestData, RiotManifest};
+pub use crate::file::File;
+pub use crate::parser::header::Header;
+pub use crate::parser::manifest::ManifestData;
+pub use crate::parser::RiotManifest;
