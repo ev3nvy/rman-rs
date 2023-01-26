@@ -1,8 +1,7 @@
 use std::collections::HashMap;
 
+use crate::entries::FileEntry;
 use crate::error::ManifestError;
-
-use super::file_entry::FileEntry;
 
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
