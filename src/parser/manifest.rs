@@ -1,27 +1,12 @@
-mod bundle_entry;
-mod chunk_entry;
-mod directory_entry;
-mod file;
-mod file_entry;
-mod key_entry;
-mod language_entry;
-mod param_entry;
-
 use std::collections::HashMap;
 
+use crate::entries::{BundleEntry, DirectoryEntry, FileEntry, KeyEntry, LanguageEntry, ParamEntry};
 use crate::error::ManifestError;
 use crate::generated::rman::root_as_manifest;
-
-pub use self::bundle_entry::BundleEntry;
-pub use self::directory_entry::DirectoryEntry;
-pub use self::file::File;
-pub use self::file_entry::FileEntry;
-pub use self::key_entry::KeyEntry;
-pub use self::language_entry::LanguageEntry;
-pub use self::param_entry::ParamEntry;
+use crate::File;
 
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
-pub struct Manifest {
+pub struct ManifestData {
     pub bundle_entries: Vec<BundleEntry>,
     pub directory_entries: Vec<DirectoryEntry>,
     pub file_entries: Vec<FileEntry>,
@@ -42,7 +27,7 @@ macro_rules! map_vector {
     };
 }
 
-impl TryFrom<Vec<u8>> for Manifest {
+impl TryFrom<Vec<u8>> for ManifestData {
     type Error = ManifestError;
 
     fn try_from(bytes: Vec<u8>) -> Result<Self, Self::Error> {
@@ -78,7 +63,7 @@ impl TryFrom<Vec<u8>> for Manifest {
     }
 }
 
-impl Manifest {
+impl ManifestData {
     fn try_map_languages(language_entries: &[LanguageEntry]) -> HashMap<u8, String> {
         language_entries
             .iter()

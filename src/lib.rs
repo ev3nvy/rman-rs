@@ -1,11 +1,18 @@
+// #![deny(missing_docs)]
+#![deny(missing_debug_implementations)]
+
+pub mod entries;
 pub mod error;
-mod generated;
+mod file;
 mod parser;
 
-pub use parser::{File, FileHeader, Manifest, ManifestFile};
-
-pub mod entries {
-    pub use crate::parser::manifest::{
-        BundleEntry, DirectoryEntry, FileEntry, KeyEntry, LanguageEntry, ParamEntry,
-    };
+mod generated {
+    #![allow(clippy::all, clippy::pedantic, clippy::nursery)]
+    #![allow(missing_debug_implementations, unused_imports)]
+    include!(concat!(env!("OUT_DIR"), "/schema_generated.rs"));
 }
+
+pub use crate::file::File;
+pub use crate::parser::header::Header;
+pub use crate::parser::manifest::ManifestData;
+pub use crate::parser::RiotManifest;

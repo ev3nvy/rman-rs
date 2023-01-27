@@ -6,7 +6,7 @@ use log::{debug, info, warn};
 use crate::error::ManifestError;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-pub struct FileHeader {
+pub struct Header {
     pub magic: u32,
     pub major: u8,
     pub minor: u8,
@@ -17,7 +17,7 @@ pub struct FileHeader {
     pub uncompressed_size: u32,
 }
 
-impl TryFrom<&[u8]> for FileHeader {
+impl TryFrom<&[u8]> for Header {
     type Error = ManifestError;
 
     fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
@@ -101,7 +101,7 @@ mod tests {
 
         macro_rules! assert_error {
             ($buf: ident, $error: ident) => {
-                let Err(error) = crate::FileHeader::try_from(&$buf[..]) else {
+                let Err(error) = crate::Header::try_from(&$buf[..]) else {
                                                     panic!("did not throw an error");
                                                 };
                 let crate::error::ManifestError::$error(..) = error else {
@@ -115,7 +115,7 @@ mod tests {
 
     #[test]
     fn should_parse_when_valid_header() {
-        if let Err(error) = FileHeader::try_from(&helpers::VALID_HEADER[..]) {
+        if let Err(error) = Header::try_from(&helpers::VALID_HEADER[..]) {
             panic!(
                 "there was an error when parsing header, header: {:?}",
                 error
@@ -125,7 +125,7 @@ mod tests {
 
     #[test]
     fn should_have_correct_values_when_valid_header() {
-        let header = FileHeader::try_from(&helpers::VALID_HEADER[..]).unwrap();
+        let header = Header::try_from(&helpers::VALID_HEADER[..]).unwrap();
 
         assert_eq!(header.magic, 0x4E414D52, "magic bytes did not match");
         assert_eq!(header.major, 2, "major version did not match");
@@ -146,7 +146,7 @@ mod tests {
     #[test]
     fn should_throw_correct_errors_when_eof() {
         // EOF when reading magic bytes
-        let error = FileHeader::try_from(&helpers::VALID_HEADER[..3])
+        let error = Header::try_from(&helpers::VALID_HEADER[..3])
             .err()
             .expect("did not throw an error on missing bytes");
         match error {
@@ -155,7 +155,7 @@ mod tests {
         };
 
         // EOF when reading major
-        let error = FileHeader::try_from(&helpers::VALID_HEADER[..4])
+        let error = Header::try_from(&helpers::VALID_HEADER[..4])
             .err()
             .expect("did not throw an error on missing bytes");
         match error {
@@ -164,7 +164,7 @@ mod tests {
         };
 
         // EOF when reading minor
-        let error = FileHeader::try_from(&helpers::VALID_HEADER[..5])
+        let error = Header::try_from(&helpers::VALID_HEADER[..5])
             .err()
             .expect("did not throw an error on missing bytes");
         match error {
@@ -173,7 +173,7 @@ mod tests {
         };
 
         // EOF when reading flags
-        let error = FileHeader::try_from(&helpers::VALID_HEADER[..7])
+        let error = Header::try_from(&helpers::VALID_HEADER[..7])
             .err()
             .expect("did not throw an error on missing bytes");
         match error {
@@ -182,7 +182,7 @@ mod tests {
         };
 
         // EOF when reading offset
-        let error = FileHeader::try_from(&helpers::VALID_HEADER[..11])
+        let error = Header::try_from(&helpers::VALID_HEADER[..11])
             .err()
             .expect("did not throw an error on missing bytes");
         match error {
@@ -212,7 +212,7 @@ mod tests {
         .concat();
 
         #[cfg(not(feature = "version_error"))]
-        if let Err(_) = FileHeader::try_from(&buf[..]) {
+        if let Err(_) = Header::try_from(&buf[..]) {
             panic!("error was thrown");
         }
 
@@ -230,7 +230,7 @@ mod tests {
         .concat();
 
         #[cfg(not(feature = "version_error"))]
-        if let Err(_) = FileHeader::try_from(&buf[..]) {
+        if let Err(_) = Header::try_from(&buf[..]) {
             panic!("error was thrown")
         }
 

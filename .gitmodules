@@ -1,0 +1,3 @@
+[submodule "rman-schema"]
+	path = rman-schema
+	url = https://github.com/ev3nvy/rman-schema.git
