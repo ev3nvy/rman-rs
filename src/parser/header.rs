@@ -5,19 +5,74 @@ use log::{debug, info, warn};
 
 use crate::{ManifestError, Result};
 
+/// File header.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct Header {
+    /// Magic bytes of the file.
+    ///
+    /// They are stored as [`u32`] and not as a string, which also means that it reads `RMAN` in
+    /// reverse because of endianness.
     pub magic: u32,
+    /// Major version of the manifest format.
+    ///
+    /// So far, it's only ever been 2.
+    ///
+    /// NOTE: The library logs if the version differs from 2 using the [log crate][log].
     pub major: u8,
+    /// Minor version of the manifest format.
+    ///
+    /// So far, it's only ever been 0.
+    ///
+    /// NOTE: The library logs if the version differs from 0 using the [log crate][log].
     pub minor: u8,
+    /// Manifest flags (no idea what any of them mean or do).
     pub flags: u16,
+    /// Offset to the compressed flatbuffer data.
     pub offset: u32,
+    /// Size of the parsed flatbuffer schema before decompression.
     pub compressed_size: u32,
+    /// Manifest id.
     pub manifest_id: u64,
+    /// Size of the parsed flatbuffer schema after decompression.
     pub uncompressed_size: u32,
 }
 
 impl Header {
+    /// Main header parser method.
+    ///
+    /// This method tries to parse the file header, and does some basic checks that it is indeed a
+    /// Riot Manifest file.
+    ///
+    /// It checks the [magic bytes](Header::magic), [version](Header::major),
+    /// [offset](Header::offset) and [compressed size](Header::compressed_size).
+    ///
+    /// # Errors
+    ///
+    /// If converting file size from [`usize`] fails, the error
+    /// [`ConversionFailure`][crate::ManifestError::ConversionFailure] is returned.
+    ///
+    /// If seeking to start (rewinding) fails, the error
+    /// [`SeekError`][crate::ManifestError::SeekError] is returned.
+    ///
+    /// If reading from io stream fails, the error [`IoError`][crate::ManifestError::IoError] is
+    /// returned.
+    ///
+    /// If magic bytes do not equal to `R`, `M`, `A` and `N`, the error
+    /// [`InvalidMagicBytes`][crate::ManifestError::InvalidMagicBytes] is returned.
+    ///
+    /// If major version does not equal 2, and the feature
+    /// [`version_error`](index.html#feature-version_error) is enabled, the error
+    /// [`InvalidMajor`][crate::ManifestError::InvalidMajor] is returned.
+    ///
+    /// If minor version does not equal 0, and the feature
+    /// [`version_error`](index.html#feature-version_error) is enabled, the error
+    /// [`InvalidMinor`][crate::ManifestError::InvalidMinor] is returned.
+    ///
+    /// If offset is smaller or larger than the file, the error
+    /// [`InvalidOffset`][crate::ManifestError::InvalidOffset] is returned.
+    ///
+    /// If compressed_size is smaller or larger than the file, the error
+    /// [`CompressedSizeTooLarge`][crate::ManifestError::CompressedSizeTooLarge] is returned.
     pub fn from_reader<R>(reader: &mut R) -> Result<Self>
     where
         R: Read + Seek,
