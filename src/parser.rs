@@ -5,7 +5,7 @@ use header::Header;
 use manifest::ManifestData;
 
 use std::fs;
-use std::io::{Cursor, Read, Seek, SeekFrom};
+use std::io::{BufReader, Read, Seek, SeekFrom};
 use std::path::Path;
 
 use log::debug;
@@ -19,34 +19,25 @@ pub struct RiotManifest {
 }
 
 impl RiotManifest {
-    pub fn try_from_path<P>(path: P) -> Result<Self, ManifestError>
+    pub fn from_path<P>(path: P) -> Result<Self, ManifestError>
     where
         P: AsRef<Path>,
     {
-        let bytes = match fs::read(path) {
+        let file = match fs::File::open(path) {
             Ok(result) => result,
             Err(error) => return Err(ManifestError::ReadFileError(error)),
         };
-        Self::try_from(&bytes[..])
+        let mut reader = BufReader::new(file);
+        Self::from_reader(&mut reader)
     }
-}
 
-impl TryFrom<Vec<u8>> for RiotManifest {
-    type Error = ManifestError;
+    pub fn from_reader<R>(reader: &mut R) -> Result<Self, ManifestError>
+    where
+        R: Read + Seek,
+    {
+        let header = Header::from_reader(reader)?;
 
-    fn try_from(bytes: Vec<u8>) -> Result<Self, Self::Error> {
-        Self::try_from(&bytes[..])
-    }
-}
-
-impl TryFrom<&[u8]> for RiotManifest {
-    type Error = ManifestError;
-
-    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
-        let header = Header::try_from(bytes)?;
-        let mut cursor = Cursor::new(bytes);
-
-        if let Err(error) = cursor.seek(SeekFrom::Start(header.offset.into())) {
+        if let Err(error) = reader.seek(SeekFrom::Start(header.offset.into())) {
             return Err(ManifestError::SeekError(error));
         };
 
@@ -55,7 +46,7 @@ impl TryFrom<&[u8]> for RiotManifest {
         debug!("Successfully converted \"compressed_size\" into \"usize\".");
 
         let mut buf = vec![0u8; compressed_size];
-        cursor.read_exact(&mut buf)?;
+        reader.read_exact(&mut buf)?;
 
         debug!("Attempting to convert \"uncompressed_size\" into \"usize\".");
         let uncompressed_size: usize = header.uncompressed_size.try_into()?;
