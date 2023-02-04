@@ -54,7 +54,7 @@ impl RiotManifest {
             Err(error) => return Err(ManifestError::ZstdDecompressError(error)),
         };
 
-        let data = ManifestData::parse(decompressed)?;
+        let data = ManifestData::parse(&decompressed)?;
 
         Ok(Self { header, data })
     }

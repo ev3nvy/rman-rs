@@ -28,8 +28,8 @@ macro_rules! map_vector {
 }
 
 impl ManifestData {
-    pub fn parse(bytes: Vec<u8>) -> Result<Self> {
-        let manifest = root_as_manifest(&bytes)?;
+    pub fn parse(bytes: &[u8]) -> Result<Self> {
+        let manifest = root_as_manifest(bytes)?;
 
         let bundle_entries: Vec<_> = map_vector!(manifest, bundles, BundleEntry);
         let directory_entries: Vec<_> = map_vector!(manifest, directories, DirectoryEntry);

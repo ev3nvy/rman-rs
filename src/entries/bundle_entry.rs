@@ -14,7 +14,7 @@ impl From<Bundle<'_>> for BundleEntry {
         let id = bundle.id();
         let chunks = bundle.chunks().unwrap_or_default();
 
-        let chunks = chunks.iter().map(|c| ChunkEntry::from(c)).collect();
+        let chunks = chunks.iter().map(ChunkEntry::from).collect();
 
         Self { id, chunks }
     }
