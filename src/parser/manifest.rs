@@ -61,14 +61,14 @@ impl ManifestData {
     fn map_languages(language_entries: &[LanguageEntry]) -> HashMap<u8, String> {
         language_entries
             .iter()
-            .map(|l| (l.id, l.name.to_string()))
+            .map(|l| (l.id, l.name.to_owned()))
             .collect()
     }
 
     fn map_directories(directory_entries: &[DirectoryEntry]) -> HashMap<u64, (String, u64)> {
         directory_entries
             .iter()
-            .map(|d| (d.id, (d.name.to_string(), d.parent_id)))
+            .map(|d| (d.id, (d.name.to_owned(), d.parent_id)))
             .collect()
     }
 

@@ -10,7 +10,7 @@ pub struct LanguageEntry {
 impl From<Language<'_>> for LanguageEntry {
     fn from(language: Language) -> Self {
         let id = language.id();
-        let name = language.name().unwrap_or_default().to_string();
+        let name = language.name().unwrap_or_default().to_owned();
 
         Self { id, name }
     }

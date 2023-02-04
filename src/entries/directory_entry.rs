@@ -12,7 +12,7 @@ impl From<Directory<'_>> for DirectoryEntry {
     fn from(directory: Directory) -> Self {
         let id = directory.id();
         let parent_id = directory.parent_id();
-        let name = directory.name().unwrap_or_default().to_string();
+        let name = directory.name().unwrap_or_default().to_owned();
 
         Self {
             id,

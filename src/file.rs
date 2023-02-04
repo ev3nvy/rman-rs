@@ -25,12 +25,12 @@ impl File {
         chunk_entries: &HashMap<u64, (u64, u64, u32, u32)>,
     ) -> Result<Self> {
         let id = file.id;
-        let name = file.name.to_string();
+        let name = file.name.to_owned();
         let permissions = file.permissions;
         let size = file.size;
-        let symlink = file.symlink.to_string();
+        let symlink = file.symlink.to_owned();
         let language_mask = file.language_mask;
-        let chunk_ids = file.chunk_ids.clone();
+        let chunk_ids = file.chunk_ids.to_owned();
 
         let mut directory_id = file.directory_id;
         let mut path = String::new();
@@ -51,7 +51,7 @@ impl File {
             }
 
             if let Some(lang_name) = language_entries.get(&(i + 1)) {
-                languages.push(lang_name.to_string());
+                languages.push(lang_name.to_owned());
             }
         }
 
