@@ -46,10 +46,8 @@ impl TryFrom<Vec<u8>> for ManifestData {
 
         let files = file_entries
             .iter()
-            .map(|f| {
-                File::try_parse(f, &mapped_languages, &mapped_directories, &mapped_chunks).unwrap()
-            })
-            .collect();
+            .map(|f| File::parse(f, &mapped_languages, &mapped_directories, &mapped_chunks))
+            .collect::<Result<Vec<File>, ManifestError>>()?;
 
         Ok(Self {
             bundle_entries,

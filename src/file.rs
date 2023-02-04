@@ -18,7 +18,7 @@ pub struct File {
 }
 
 impl File {
-    pub fn try_parse(
+    pub fn parse(
         file: &FileEntry,
         language_entries: &HashMap<u8, String>,
         directories: &HashMap<u64, (String, u64)>,
