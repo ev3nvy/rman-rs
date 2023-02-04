@@ -1,5 +1,7 @@
 use thiserror::Error;
 
+pub type Result<T> = core::result::Result<T, ManifestError>;
+
 #[derive(Error, Debug)]
 pub enum ManifestError {
     #[error("Failed reading file: {0}")]

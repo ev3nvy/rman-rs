@@ -3,7 +3,7 @@ use std::io::{Read, Seek, SeekFrom};
 use byteorder::{ReadBytesExt, LE};
 use log::{debug, info, warn};
 
-use crate::error::ManifestError;
+use crate::{ManifestError, Result};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct Header {
@@ -18,7 +18,7 @@ pub struct Header {
 }
 
 impl Header {
-    pub fn from_reader<R>(reader: &mut R) -> Result<Self, ManifestError>
+    pub fn from_reader<R>(reader: &mut R) -> Result<Self>
     where
         R: Read + Seek,
     {

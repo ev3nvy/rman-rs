@@ -12,7 +12,7 @@ mod generated {
     include!(concat!(env!("OUT_DIR"), "/schema_generated.rs"));
 }
 
-pub use crate::error::ManifestError;
+pub use crate::error::{ManifestError, Result};
 pub use crate::file::File;
 pub use crate::parser::header::Header;
 pub use crate::parser::manifest::ManifestData;

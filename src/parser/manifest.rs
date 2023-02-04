@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
 use crate::entries::{BundleEntry, DirectoryEntry, FileEntry, KeyEntry, LanguageEntry, ParamEntry};
-use crate::error::ManifestError;
 use crate::generated::rman::root_as_manifest;
 use crate::File;
+use crate::Result;
 
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct ManifestData {
@@ -28,7 +28,7 @@ macro_rules! map_vector {
 }
 
 impl ManifestData {
-    pub fn parse(bytes: Vec<u8>) -> Result<Self, ManifestError> {
+    pub fn parse(bytes: Vec<u8>) -> Result<Self> {
         let manifest = root_as_manifest(&bytes).unwrap();
 
         let bundle_entries: Vec<_> = map_vector!(manifest, bundles, BundleEntry);
@@ -45,7 +45,7 @@ impl ManifestData {
         let files = file_entries
             .iter()
             .map(|f| File::parse(f, &mapped_languages, &mapped_directories, &mapped_chunks))
-            .collect::<Result<Vec<File>, ManifestError>>()?;
+            .collect::<Result<Vec<File>>>()?;
 
         Ok(Self {
             bundle_entries,

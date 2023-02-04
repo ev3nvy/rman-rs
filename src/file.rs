@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::entries::FileEntry;
-use crate::error::ManifestError;
+use crate::Result;
 
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
@@ -23,7 +23,7 @@ impl File {
         language_entries: &HashMap<u8, String>,
         directories: &HashMap<u64, (String, u64)>,
         chunk_entries: &HashMap<u64, (u64, u64, u32, u32)>,
-    ) -> Result<Self, ManifestError> {
+    ) -> Result<Self> {
         let id = file.id;
         let name = file.name.to_string();
         let permissions = file.permissions;

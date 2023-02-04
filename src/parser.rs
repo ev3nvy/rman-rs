@@ -10,7 +10,7 @@ use std::path::Path;
 
 use log::debug;
 
-use crate::error::ManifestError;
+use crate::{ManifestError, Result};
 
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct RiotManifest {
@@ -19,7 +19,7 @@ pub struct RiotManifest {
 }
 
 impl RiotManifest {
-    pub fn from_path<P>(path: P) -> Result<Self, ManifestError>
+    pub fn from_path<P>(path: P) -> Result<Self>
     where
         P: AsRef<Path>,
     {
@@ -31,7 +31,7 @@ impl RiotManifest {
         Self::from_reader(&mut reader)
     }
 
-    pub fn from_reader<R>(reader: &mut R) -> Result<Self, ManifestError>
+    pub fn from_reader<R>(reader: &mut R) -> Result<Self>
     where
         R: Read + Seek,
     {
