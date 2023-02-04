@@ -23,10 +23,7 @@ impl RiotManifest {
     where
         P: AsRef<Path>,
     {
-        let file = match fs::File::open(path) {
-            Ok(result) => result,
-            Err(error) => return Err(ManifestError::ReadFileError(error)),
-        };
+        let file = fs::File::open(path)?;
         let mut reader = BufReader::new(file);
         Self::from_reader(&mut reader)
     }

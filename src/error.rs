@@ -4,10 +4,6 @@ pub type Result<T> = core::result::Result<T, ManifestError>;
 
 #[derive(Error, Debug)]
 pub enum ManifestError {
-    #[error("Failed reading file: {0}")]
-    ReadFileError(std::io::Error),
-    #[error("Could not read value from buffer. Error: {0}")]
-    ReadBytesError(#[from] std::io::Error),
     #[error("Could not seek to desired position. Error: {0}")]
     SeekError(std::io::Error),
     #[error("Invalid magic bytes (expected: \"0x4E414D52\", was: \"{0:#010x}\").")]
@@ -22,10 +18,14 @@ pub enum ManifestError {
     InvalidOffset(u32),
     #[error("Compressed size ({0}) is larger than the total file size.")]
     CompressedSizeTooLarge(u32),
+    #[error("{0}")]
+    IoError(#[from] std::io::Error),
     #[error("Conversion failed. Error: {0}")]
     ConversionFailure(#[from] std::num::TryFromIntError),
     #[error("{0}")]
     ZstdDecompressError(std::io::Error),
     #[error("{0}")]
-    FlatbufferError(std::io::Error),
+    FileParseError(String),
+    #[error("{0}")]
+    FlatbufferError(#[from] flatbuffers::InvalidFlatbuffer),
 }

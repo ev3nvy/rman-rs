@@ -158,7 +158,7 @@ mod tests {
             .err()
             .expect("did not throw an error on missing bytes");
         match error {
-            crate::error::ManifestError::ReadBytesError(_) => (),
+            crate::error::ManifestError::IoError(_) => (),
             _ => panic!("invalid ManifestError error when eof"),
         };
 
@@ -167,7 +167,7 @@ mod tests {
             .err()
             .expect("did not throw an error on missing bytes");
         match error {
-            crate::error::ManifestError::ReadBytesError(_) => (),
+            crate::error::ManifestError::IoError(_) => (),
             _ => panic!("invalid ManifestError error when eof"),
         };
 
@@ -176,7 +176,7 @@ mod tests {
             .err()
             .expect("did not throw an error on missing bytes");
         match error {
-            crate::error::ManifestError::ReadBytesError(_) => (),
+            crate::error::ManifestError::IoError(_) => (),
             _ => panic!("invalid ManifestError error when eof"),
         };
 
@@ -185,7 +185,7 @@ mod tests {
             .err()
             .expect("did not throw an error on missing bytes");
         match error {
-            crate::error::ManifestError::ReadBytesError(_) => (),
+            crate::error::ManifestError::IoError(_) => (),
             _ => panic!("invalid ManifestError error when eof"),
         };
 
@@ -194,7 +194,7 @@ mod tests {
             .err()
             .expect("did not throw an error on missing bytes");
         match error {
-            crate::error::ManifestError::ReadBytesError(_) => (),
+            crate::error::ManifestError::IoError(_) => (),
             _ => panic!("invalid ManifestError error when eof"),
         };
 
