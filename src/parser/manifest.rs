@@ -27,10 +27,8 @@ macro_rules! map_vector {
     };
 }
 
-impl TryFrom<Vec<u8>> for ManifestData {
-    type Error = ManifestError;
-
-    fn try_from(bytes: Vec<u8>) -> Result<Self, Self::Error> {
+impl ManifestData {
+    pub fn parse(bytes: Vec<u8>) -> Result<Self, ManifestError> {
         let manifest = root_as_manifest(&bytes).unwrap();
 
         let bundle_entries: Vec<_> = map_vector!(manifest, bundles, BundleEntry);
@@ -59,9 +57,7 @@ impl TryFrom<Vec<u8>> for ManifestData {
             files,
         })
     }
-}
 
-impl ManifestData {
     fn map_languages(language_entries: &[LanguageEntry]) -> HashMap<u8, String> {
         language_entries
             .iter()

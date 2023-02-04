@@ -66,7 +66,7 @@ impl TryFrom<&[u8]> for RiotManifest {
             Err(error) => return Err(ManifestError::ZstdDecompressError(error)),
         };
 
-        let data = ManifestData::try_from(decompressed)?;
+        let data = ManifestData::parse(decompressed)?;
 
         Ok(Self { header, data })
     }
