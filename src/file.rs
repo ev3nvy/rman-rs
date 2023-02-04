@@ -3,21 +3,65 @@ use std::collections::HashMap;
 use crate::entries::FileEntry;
 use crate::{ManifestError, Result};
 
+/// Single file object.
+///
+/// Represents a file and it's properties that can be downloaded and written to a file system.
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct File {
+    /// Id of the file.
     pub id: u64,
+    /// File name.
     pub name: String,
+    /// Permissions for the given file.
     pub permissions: u8,
+    /// Size of the file entry in bytes.
     pub size: u32,
+    /// Absolute path to the file, where root is one of the
+    /// [directory entries][crate::entries::DirectoryEntry].
     pub path: String,
+    /// Symbolic link of the file.
     pub symlink: String,
+    /// A vector of applicable languages.
     pub languages: Vec<String>,
     #[allow(dead_code)]
     chunks: Vec<(u64, u64, u32, u32)>,
 }
 
 impl File {
+    /// Parses [`FileEntry`] into a [`File`] object.
+    ///
+    /// First parameter is a [`FileEntry`] that is parsed into a [`File`], the other three are
+    /// [`HashMap`]s used for fast lookups for the required data.
+    ///
+    /// Here is how they are structured:
+    /// - Parameter `language_entries` is a [`HashMap`] where the key is a
+    /// [language id](crate::entries::LanguageEntry::id) and the value is a
+    /// [language name](crate::entries::LanguageEntry::name).
+    ///
+    /// - Parameter `directories` is a [`HashMap`] where the key is a
+    /// [directory id](crate::entries::DirectoryEntry::id) and the value is a tuple of:
+    ///   - [directory name](crate::entries::DirectoryEntry::name)
+    ///   - and [parent directory id](crate::entries::DirectoryEntry::parent_id).
+    ///
+    /// - Parameter `chunk_entries` is a [`HashMap`] where the key is a
+    /// [chunk id](crate::entries::ChunkEntry::id) and the value is a tuple of:
+    ///   - [bundle id](crate::entries::BundleEntry::id),
+    ///   - offset in bundle (to this specific chunk),
+    ///   - [uncompressed size](crate::entries::ChunkEntry::uncompressed_size)
+    ///   - and [compressed size](crate::entries::ChunkEntry::compressed_size).
+    ///
+    /// [`File`]: crate::File
+    /// [`FileEntry`]: crate::entries::FileEntry
+    ///
+    /// # Errors
+    ///
+    /// If a directory with [provided id](crate::entries::FileEntry::directory_id) or
+    /// [parent id](crate::entries::DirectoryEntry::parent_id) does not exist within the
+    /// `directories` [`HashMap`], or if a chunk with
+    /// [chunk id](crate::entries::FileEntry::chunk_ids) does not exist within the `chunk_entries`
+    /// [`HashMap`], the error [`FileParseError`][crate::ManifestError::FileParseError] is
+    /// returned.
     pub fn parse(
         file: &FileEntry,
         language_entries: &HashMap<u8, String>,
@@ -83,6 +127,9 @@ impl File {
 }
 
 impl File {
+    /// Function to download the associated file contents.
+    ///
+    /// Currently unimplemented.
     pub fn download(&self) {
         unimplemented!("downloading not yet implemented");
     }
