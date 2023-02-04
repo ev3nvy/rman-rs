@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
 use crate::entries::{BundleEntry, DirectoryEntry, FileEntry, KeyEntry, LanguageEntry, ParamEntry};
-use crate::error::ManifestError;
 use crate::generated::rman::root_as_manifest;
 use crate::File;
+use crate::Result;
 
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct ManifestData {
@@ -22,16 +22,14 @@ macro_rules! map_vector {
             .$name()
             .unwrap_or_default()
             .iter()
-            .map(|i| $entry::try_from(i).unwrap_or_default())
+            .map(|i| $entry::from(i))
             .collect()
     };
 }
 
-impl TryFrom<Vec<u8>> for ManifestData {
-    type Error = ManifestError;
-
-    fn try_from(bytes: Vec<u8>) -> Result<Self, Self::Error> {
-        let manifest = root_as_manifest(&bytes).unwrap();
+impl ManifestData {
+    pub fn parse(bytes: &[u8]) -> Result<Self> {
+        let manifest = root_as_manifest(bytes)?;
 
         let bundle_entries: Vec<_> = map_vector!(manifest, bundles, BundleEntry);
         let directory_entries: Vec<_> = map_vector!(manifest, directories, DirectoryEntry);
@@ -40,16 +38,14 @@ impl TryFrom<Vec<u8>> for ManifestData {
         let language_entries: Vec<_> = map_vector!(manifest, languages, LanguageEntry);
         let param_entries = map_vector!(manifest, params, ParamEntry);
 
-        let mapped_languages = Self::try_map_languages(&language_entries);
-        let mapped_directories = Self::try_map_directories(&directory_entries);
-        let mapped_chunks = Self::try_map_chunks(&bundle_entries);
+        let mapped_languages = Self::map_languages(&language_entries);
+        let mapped_directories = Self::map_directories(&directory_entries);
+        let mapped_chunks = Self::map_chunks(&bundle_entries);
 
         let files = file_entries
             .iter()
-            .map(|f| {
-                File::try_parse(f, &mapped_languages, &mapped_directories, &mapped_chunks).unwrap()
-            })
-            .collect();
+            .map(|f| File::parse(f, &mapped_languages, &mapped_directories, &mapped_chunks))
+            .collect::<Result<Vec<File>>>()?;
 
         Ok(Self {
             bundle_entries,
@@ -61,24 +57,22 @@ impl TryFrom<Vec<u8>> for ManifestData {
             files,
         })
     }
-}
 
-impl ManifestData {
-    fn try_map_languages(language_entries: &[LanguageEntry]) -> HashMap<u8, String> {
+    fn map_languages(language_entries: &[LanguageEntry]) -> HashMap<u8, String> {
         language_entries
             .iter()
-            .map(|l| (l.id, l.name.to_string()))
+            .map(|l| (l.id, l.name.to_owned()))
             .collect()
     }
 
-    fn try_map_directories(directory_entries: &[DirectoryEntry]) -> HashMap<u64, (String, u64)> {
+    fn map_directories(directory_entries: &[DirectoryEntry]) -> HashMap<u64, (String, u64)> {
         directory_entries
             .iter()
-            .map(|d| (d.id, (d.name.to_string(), d.parent_id)))
+            .map(|d| (d.id, (d.name.to_owned(), d.parent_id)))
             .collect()
     }
 
-    fn try_map_chunks(bundle_entries: &[BundleEntry]) -> HashMap<u64, (u64, u64, u32, u32)> {
+    fn map_chunks(bundle_entries: &[BundleEntry]) -> HashMap<u64, (u64, u64, u32, u32)> {
         bundle_entries
             .iter()
             .flat_map(|b| {

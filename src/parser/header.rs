@@ -1,9 +1,9 @@
-use std::io::Cursor;
+use std::io::{Read, Seek};
 
 use byteorder::{ReadBytesExt, LE};
 use log::{debug, info, warn};
 
-use crate::error::ManifestError;
+use crate::{ManifestError, Result};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct Header {
@@ -17,12 +17,22 @@ pub struct Header {
     pub uncompressed_size: u32,
 }
 
-impl TryFrom<&[u8]> for Header {
-    type Error = ManifestError;
+impl Header {
+    pub fn from_reader<R>(reader: &mut R) -> Result<Self>
+    where
+        R: Read + Seek,
+    {
+        debug!("Attempting to convert \"reader.bytes().count()\" into \"u32\".");
+        let size: u32 = reader.bytes().count().try_into()?;
+        debug!("Successfully converted \"reader.bytes().count()\" into \"u32\".");
 
-    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
-        let mut cursor = Cursor::new(bytes);
-        let magic = cursor.read_u32::<LE>()?;
+        debug!("The file is {size} bytes in size");
+
+        if let Err(error) = reader.rewind() {
+            return Err(ManifestError::SeekError(error));
+        };
+
+        let magic = reader.read_u32::<LE>()?;
 
         // N A M R (RMAN bacwards because I am reading this as an u32, instead
         // of as an array of chars)
@@ -30,7 +40,7 @@ impl TryFrom<&[u8]> for Header {
             return Err(ManifestError::InvalidMagicBytes(magic));
         }
 
-        let major = cursor.read_u8()?;
+        let major = reader.read_u8()?;
         if major != 2 {
             warn!("Invalid major version. Parsing the manfiset may not work.");
             info!("If you want the crate to throw an error instead, you can enable the \"version_error\" feature");
@@ -38,7 +48,7 @@ impl TryFrom<&[u8]> for Header {
             return Err(ManifestError::InvalidMajor(major));
         }
 
-        let minor = cursor.read_u8()?;
+        let minor = reader.read_u8()?;
         if major == 2 && minor != 0 {
             info!("Invalid minor version. Parsing the manfiset will probably still work.");
             info!("If you want the crate to throw an error instead, you can enable the \"version_error\" feature");
@@ -46,21 +56,14 @@ impl TryFrom<&[u8]> for Header {
             return Err(ManifestError::InvalidMinor(minor));
         }
 
-        let flags = cursor.read_u16::<LE>()?;
-
-        let offset = cursor.read_u32::<LE>()?;
-
-        debug!("Attempting to convert \"bytes.len()\" into \"u32\".");
-        let size: u32 = bytes.len().try_into()?;
-        debug!("Successfully converted \"bytes.len()\" into \"u32\".");
-
-        debug!("The file is {size} bytes in size");
+        let flags = reader.read_u16::<LE>()?;
+        let offset = reader.read_u32::<LE>()?;
 
         if offset < 28 || offset >= size {
             return Err(ManifestError::InvalidOffset(offset));
         }
 
-        let compressed_size = cursor.read_u32::<LE>()?;
+        let compressed_size = reader.read_u32::<LE>()?;
         if compressed_size > size - 28 {
             return Err(ManifestError::CompressedSizeTooLarge(compressed_size));
         }
@@ -70,8 +73,8 @@ impl TryFrom<&[u8]> for Header {
             ));
         }
 
-        let manifest_id = cursor.read_u64::<LE>()?;
-        let uncompressed_size = cursor.read_u32::<LE>()?;
+        let manifest_id = reader.read_u64::<LE>()?;
+        let uncompressed_size = reader.read_u32::<LE>()?;
 
         let file_header = Self {
             magic,
@@ -92,6 +95,8 @@ impl TryFrom<&[u8]> for Header {
 mod tests {
     use super::*;
 
+    use std::io::Cursor;
+
     mod helpers {
         pub const VALID_HEADER: [u8; 32] = [
             0x52, 0x4D, 0x41, 0x4E, 0x02, 0x00, 0x00, 0x02, 0x1C, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -101,7 +106,8 @@ mod tests {
 
         macro_rules! assert_error {
             ($buf: ident, $error: ident) => {
-                let Err(error) = crate::Header::try_from(&$buf[..]) else {
+                let mut cursor = Cursor::new($buf);
+                let Err(error) = crate::Header::from_reader(&mut cursor) else {
                                                     panic!("did not throw an error");
                                                 };
                 let crate::error::ManifestError::$error(..) = error else {
@@ -115,7 +121,8 @@ mod tests {
 
     #[test]
     fn should_parse_when_valid_header() {
-        if let Err(error) = Header::try_from(&helpers::VALID_HEADER[..]) {
+        let mut cursor = Cursor::new(helpers::VALID_HEADER);
+        if let Err(error) = Header::from_reader(&mut cursor) {
             panic!(
                 "there was an error when parsing header, header: {:?}",
                 error
@@ -125,7 +132,8 @@ mod tests {
 
     #[test]
     fn should_have_correct_values_when_valid_header() {
-        let header = Header::try_from(&helpers::VALID_HEADER[..]).unwrap();
+        let mut cursor = Cursor::new(helpers::VALID_HEADER);
+        let header = Header::from_reader(&mut cursor).unwrap();
 
         assert_eq!(header.magic, 0x4E414D52, "magic bytes did not match");
         assert_eq!(header.major, 2, "major version did not match");
@@ -146,47 +154,47 @@ mod tests {
     #[test]
     fn should_throw_correct_errors_when_eof() {
         // EOF when reading magic bytes
-        let error = Header::try_from(&helpers::VALID_HEADER[..3])
+        let error = Header::from_reader(&mut Cursor::new(helpers::VALID_HEADER[..3].to_owned()))
             .err()
             .expect("did not throw an error on missing bytes");
         match error {
-            crate::error::ManifestError::ReadBytesError(_) => (),
+            crate::error::ManifestError::IoError(_) => (),
             _ => panic!("invalid ManifestError error when eof"),
         };
 
         // EOF when reading major
-        let error = Header::try_from(&helpers::VALID_HEADER[..4])
+        let error = Header::from_reader(&mut Cursor::new(helpers::VALID_HEADER[..4].to_owned()))
             .err()
             .expect("did not throw an error on missing bytes");
         match error {
-            crate::error::ManifestError::ReadBytesError(_) => (),
+            crate::error::ManifestError::IoError(_) => (),
             _ => panic!("invalid ManifestError error when eof"),
         };
 
         // EOF when reading minor
-        let error = Header::try_from(&helpers::VALID_HEADER[..5])
+        let error = Header::from_reader(&mut Cursor::new(helpers::VALID_HEADER[..5].to_owned()))
             .err()
             .expect("did not throw an error on missing bytes");
         match error {
-            crate::error::ManifestError::ReadBytesError(_) => (),
+            crate::error::ManifestError::IoError(_) => (),
             _ => panic!("invalid ManifestError error when eof"),
         };
 
         // EOF when reading flags
-        let error = Header::try_from(&helpers::VALID_HEADER[..7])
+        let error = Header::from_reader(&mut Cursor::new(helpers::VALID_HEADER[..7].to_owned()))
             .err()
             .expect("did not throw an error on missing bytes");
         match error {
-            crate::error::ManifestError::ReadBytesError(_) => (),
+            crate::error::ManifestError::IoError(_) => (),
             _ => panic!("invalid ManifestError error when eof"),
         };
 
         // EOF when reading offset
-        let error = Header::try_from(&helpers::VALID_HEADER[..11])
+        let error = Header::from_reader(&mut Cursor::new(helpers::VALID_HEADER[..11].to_owned()))
             .err()
             .expect("did not throw an error on missing bytes");
         match error {
-            crate::error::ManifestError::ReadBytesError(_) => (),
+            crate::error::ManifestError::IoError(_) => (),
             _ => panic!("invalid ManifestError error when eof"),
         };
 
@@ -212,8 +220,11 @@ mod tests {
         .concat();
 
         #[cfg(not(feature = "version_error"))]
-        if let Err(_) = Header::try_from(&buf[..]) {
-            panic!("error was thrown");
+        {
+            let mut cursor = Cursor::new(buf);
+            if let Err(_) = Header::from_reader(&mut cursor) {
+                panic!("error was thrown")
+            }
         }
 
         #[cfg(feature = "version_error")]
@@ -230,8 +241,11 @@ mod tests {
         .concat();
 
         #[cfg(not(feature = "version_error"))]
-        if let Err(_) = Header::try_from(&buf[..]) {
-            panic!("error was thrown")
+        {
+            let mut cursor = Cursor::new(buf);
+            if let Err(_) = Header::from_reader(&mut cursor) {
+                panic!("error was thrown")
+            }
         }
 
         #[cfg(feature = "version_error")]

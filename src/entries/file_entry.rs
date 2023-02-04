@@ -1,5 +1,3 @@
-use std::io::Error;
-
 use crate::generated::rman::File;
 
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -20,27 +18,25 @@ pub struct FileEntry {
     pub permissions: u8,
 }
 
-impl TryFrom<File<'_>> for FileEntry {
-    type Error = Error;
-
-    fn try_from(file: File) -> Result<Self, Self::Error> {
+impl From<File<'_>> for FileEntry {
+    fn from(file: File) -> Self {
         let id = file.id();
         let directory_id = file.directory_id();
         let size = file.size_();
-        let name = file.name().unwrap_or_default().to_string();
+        let name = file.name().unwrap_or_default().to_owned();
         let language_mask = file.language_mask();
         let unk5 = file.unk5();
         let unk6 = file.unk6();
         let chunk_ids = file.chunk_ids().unwrap_or_default();
         let unk8 = file.unk8();
-        let symlink = file.symlink().unwrap_or_default().to_string();
+        let symlink = file.symlink().unwrap_or_default().to_owned();
         let unk10 = file.unk10();
         let param_id = file.param_id();
         let permissions = file.permissions();
 
         let chunk_ids = chunk_ids.iter().collect();
 
-        Ok(Self {
+        Self {
             id,
             directory_id,
             size,
@@ -54,6 +50,6 @@ impl TryFrom<File<'_>> for FileEntry {
             unk10,
             param_id,
             permissions,
-        })
+        }
     }
 }

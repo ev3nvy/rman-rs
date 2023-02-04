@@ -1,5 +1,3 @@
-use std::io::Error;
-
 use crate::generated::rman::Directory;
 
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -10,18 +8,16 @@ pub struct DirectoryEntry {
     pub name: String,
 }
 
-impl TryFrom<Directory<'_>> for DirectoryEntry {
-    type Error = Error;
-
-    fn try_from(directory: Directory) -> Result<Self, Self::Error> {
+impl From<Directory<'_>> for DirectoryEntry {
+    fn from(directory: Directory) -> Self {
         let id = directory.id();
         let parent_id = directory.parent_id();
-        let name = directory.name().unwrap_or_default().to_string();
+        let name = directory.name().unwrap_or_default().to_owned();
 
-        Ok(Self {
+        Self {
             id,
             parent_id,
             name,
-        })
+        }
     }
 }
