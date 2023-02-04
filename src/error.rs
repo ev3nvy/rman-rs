@@ -1,5 +1,6 @@
 use thiserror::Error;
 
+/// Alias for a [`Result`][core::result::Result] with the error type [`ManifestError`].
 pub type Result<T> = core::result::Result<T, ManifestError>;
 
 /// This enum represents all possible errors that may occur when parsing a file.
