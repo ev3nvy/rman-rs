@@ -1,5 +1,3 @@
-use std::io::Error;
-
 use crate::generated::rman::Chunk;
 
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -10,18 +8,16 @@ pub struct ChunkEntry {
     pub uncompressed_size: u32,
 }
 
-impl TryFrom<Chunk<'_>> for ChunkEntry {
-    type Error = Error;
-
-    fn try_from(chunk: Chunk) -> Result<Self, Self::Error> {
+impl From<Chunk<'_>> for ChunkEntry {
+    fn from(chunk: Chunk) -> Self {
         let id = chunk.id();
         let compressed_size = chunk.compressed_size();
         let uncompressed_size = chunk.uncompressed_size();
 
-        Ok(Self {
+        Self {
             id,
             compressed_size,
             uncompressed_size,
-        })
+        }
     }
 }

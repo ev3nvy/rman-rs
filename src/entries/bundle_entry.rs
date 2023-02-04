@@ -1,5 +1,3 @@
-use std::io::Error;
-
 use crate::generated::rman::Bundle;
 
 use super::chunk_entry::ChunkEntry;
@@ -11,18 +9,13 @@ pub struct BundleEntry {
     pub chunks: Vec<ChunkEntry>,
 }
 
-impl TryFrom<Bundle<'_>> for BundleEntry {
-    type Error = Error;
-
-    fn try_from(bundle: Bundle) -> Result<Self, Self::Error> {
+impl From<Bundle<'_>> for BundleEntry {
+    fn from(bundle: Bundle) -> Self {
         let id = bundle.id();
         let chunks = bundle.chunks().unwrap_or_default();
 
-        let chunks = chunks
-            .iter()
-            .map(|c| ChunkEntry::try_from(c).unwrap())
-            .collect();
+        let chunks = chunks.iter().map(|c| ChunkEntry::from(c)).collect();
 
-        Ok(Self { id, chunks })
+        Self { id, chunks }
     }
 }

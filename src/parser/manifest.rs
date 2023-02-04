@@ -22,7 +22,7 @@ macro_rules! map_vector {
             .$name()
             .unwrap_or_default()
             .iter()
-            .map(|i| $entry::try_from(i).unwrap_or_default())
+            .map(|i| $entry::from(i))
             .collect()
     };
 }
