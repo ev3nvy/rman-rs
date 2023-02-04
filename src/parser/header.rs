@@ -1,4 +1,4 @@
-use std::io::{Read, Seek, SeekFrom};
+use std::io::{Read, Seek};
 
 use byteorder::{ReadBytesExt, LE};
 use log::{debug, info, warn};
@@ -28,7 +28,7 @@ impl Header {
 
         debug!("The file is {size} bytes in size");
 
-        if let Err(error) = reader.seek(SeekFrom::Start(0)) {
+        if let Err(error) = reader.rewind() {
             return Err(ManifestError::SeekError(error));
         };
 
