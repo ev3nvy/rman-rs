@@ -13,6 +13,8 @@ thiserror = "1.0.38"
 zstd = "0.12.1"
 
 [features]
-default = []
+default = ["rustls-tls"]
 version_error = []
 serde = ["dep:serde"]
+native-tls = ["reqwest/native-tls"]
+rustls-tls = ["reqwest/rustls-tls"]

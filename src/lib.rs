@@ -80,7 +80,7 @@
 //!
 //! # Feature: `default`
 //!
-//! By default, all of the features are disabled.
+//! By default, only [`rustls-tls`](index.html#feature-rustls-tls) is enabled.
 //!
 //! # Feature: `version_error`
 //!
@@ -91,6 +91,14 @@
 //!
 //! If enabled, all structs in [`entries`][crate::entries], as well as [`File`][crate::File]
 //! will implement [`Serialize`][serde-serialize] and [`Deserialize`][serde-deserialize].
+//!
+//! # Feature: `native-tls`
+//!
+//! If enabled, the feature with the same name is enabled for [`reqwest`].
+//!
+//! # Feature: `rustls-tls`
+//!
+//! If enabled, the feature with the same name is enabled for [`reqwest`].
 //!
 //! [flatbuffers]: https://github.com/google/flatbuffers
 //! [manifest]: https://technology.riotgames.com/news/supercharging-data-delivery-new-league-patcher
