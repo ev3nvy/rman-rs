@@ -96,4 +96,12 @@ pub enum ManifestError {
     /// Should never happen for official, Riot-made manifests.
     #[error("{0}")]
     FlatbufferError(#[from] flatbuffers::InvalidFlatbuffer),
+    /// The error was caused by a failure to process a [`Request`][reqwest::Request].
+    ///
+    /// This error occurs when [`Client::send()`](reqwest::RequestBuilder::send) fails.
+    ///
+    /// Usually occurs when there is no internet connection, or when an invalid bundle url was
+    /// provided.
+    #[error("{0}")]
+    ReqwestError(#[from] reqwest::Error),
 }
