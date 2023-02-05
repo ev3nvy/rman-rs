@@ -10,7 +10,7 @@ use crate::{ManifestError, Result};
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct File {
     /// Id of the file.
-    pub id: u64,
+    pub id: i64,
     /// File name.
     pub name: String,
     /// Permissions for the given file.
@@ -25,7 +25,7 @@ pub struct File {
     /// A vector of applicable languages.
     pub languages: Vec<String>,
     #[allow(dead_code)]
-    chunks: Vec<(u64, u64, u32, u32)>,
+    chunks: Vec<(i64, u64, u32, u32)>,
 }
 
 impl File {
@@ -65,8 +65,8 @@ impl File {
     pub fn parse(
         file: &FileEntry,
         language_entries: &HashMap<u8, String>,
-        directories: &HashMap<u64, (String, u64)>,
-        chunk_entries: &HashMap<u64, (u64, u64, u32, u32)>,
+        directories: &HashMap<i64, (String, i64)>,
+        chunk_entries: &HashMap<i64, (i64, u64, u32, u32)>,
     ) -> Result<Self> {
         let id = file.id;
         let name = file.name.to_owned();

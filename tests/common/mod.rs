@@ -141,7 +141,7 @@ impl ValidManifest {
 
         let name = Some(builder.create_string("file.txt"));
         let symlink = Some(builder.create_string(""));
-        let chunk_ids = Some(builder.create_vector(&[0u64, 1]));
+        let chunk_ids = Some(builder.create_vector(&[0i64, 1]));
         let file = File::create(
             &mut builder,
             &FileArgs {
