@@ -64,6 +64,59 @@
 //! assert_eq!(manifest.data.files.len(), 1);
 //! ```
 //!
+//! # Example: downloading a file
+//!
+//! To download a specific file from a parsed manifest, you can invoke the
+//! [download function](crate::File::download) on that [file][crate::File].
+//!
+//! ```
+//! use std::fs;
+//!
+//! # use httptest::{matchers::*, responders::*, Expectation, Server};
+//! use rman::{Result, RiotManifest};
+//!
+//! #[tokio::main]
+//! async fn main() -> Result<()> {
+//!     # let bundle = fs::read(concat!(env!("OUT_DIR"), "/valid.bundle")).unwrap();
+//!     # let server = Server::run();
+//!     # server.expect(
+//!         # Expectation::matching(request::method_path(
+//!             # "GET",
+//!             # "/bundles/0000000000000000.bundle",
+//!         # ))
+//!         # .respond_with(
+//!             # status_code(200)
+//!                 # .body(bundle)
+//!                 # .append_header("Content-Type", "binary/octet-stream")
+//!                 # .append_header("Content-Length", 13),
+//!         # ),
+//!     # );
+//!     let path = "file.manifest";
+//!     # let path = concat!(env!("OUT_DIR"), "/valid.manifest");
+//!     let manifest = RiotManifest::from_path(path)?;
+//!
+//!     let file_name = "VALORANT.exe";
+//!     # let file_name = "file.txt";
+//!     let mut file = fs::File::create(file_name)?;
+//!     let file_to_download = manifest
+//!         .data
+//!         .files
+//!         .iter()
+//!         .find(|f| f.name == file_name)
+//!         .expect(format!("file {file_name} does not exist in this manifest").as_str());
+//!
+//!     let url = "https://valorant.secure.dyn.riotcdn.net/channels/public/bundles";
+//!     # let url = server.url("/bundles").to_string();
+//!
+//!     file_to_download.download(&mut file, url).await?;
+//!
+//!     assert_eq!(std::fs::read(file_name)?.len(), 4);
+//!
+//!     # fs::remove_file(file_name)?;
+//!     Ok(())
+//! }
+//! ```
+//!
 //! # Scope
 //!
 //! This crate:
