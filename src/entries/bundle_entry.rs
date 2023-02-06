@@ -12,7 +12,7 @@ use super::chunk_entry::ChunkEntry;
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct BundleEntry {
     /// Id of the bundle entry.
-    pub id: u64,
+    pub id: i64,
     /// A vector of chunk entries.
     pub chunks: Vec<ChunkEntry>,
 }

@@ -89,24 +89,24 @@ impl ManifestData {
             .collect()
     }
 
-    fn map_directories(directory_entries: &[DirectoryEntry]) -> HashMap<u64, (String, u64)> {
+    fn map_directories(directory_entries: &[DirectoryEntry]) -> HashMap<i64, (String, i64)> {
         directory_entries
             .iter()
             .map(|d| (d.id, (d.name.to_owned(), d.parent_id)))
             .collect()
     }
 
-    fn map_chunks(bundle_entries: &[BundleEntry]) -> HashMap<u64, (u64, u64, u32, u32)> {
+    fn map_chunks(bundle_entries: &[BundleEntry]) -> HashMap<i64, (i64, u32, u32, u32)> {
         bundle_entries
             .iter()
             .flat_map(|b| {
                 b.chunks.iter().scan(0, move |offset, c| {
-                    *offset += u64::from(c.compressed_size);
+                    *offset += c.compressed_size;
                     Some((
                         c.id,
                         (
                             b.id,
-                            *offset - u64::from(c.compressed_size),
+                            *offset - c.compressed_size,
                             c.uncompressed_size,
                             c.compressed_size,
                         ),

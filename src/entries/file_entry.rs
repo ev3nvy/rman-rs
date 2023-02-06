@@ -10,9 +10,9 @@ use crate::generated::rman::File;
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct FileEntry {
     /// Id of the file entry.
-    pub id: u64,
+    pub id: i64,
     /// Id of the directory entry, to which it belongs.
-    pub directory_id: u64,
+    pub directory_id: i64,
     /// Size of the file entry in bytes.
     pub size: u32,
     /// Name of the file entry.
@@ -24,7 +24,7 @@ pub struct FileEntry {
     /// Field with an unknown function and type (it might also be an [`i8`]).
     pub unk6: u8,
     /// A vector of [chunk ids](crate::entries::ChunkEntry::id) that make up the file.
-    pub chunk_ids: Vec<u64>,
+    pub chunk_ids: Vec<i64>,
     /// Field with an unknown function and type (it might also be an [`i8`]).
     ///
     /// NOTE: seems to always be 1 when a part of `.app` file on macOS.

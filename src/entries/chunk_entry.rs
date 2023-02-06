@@ -10,7 +10,7 @@ use crate::generated::rman::Chunk;
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct ChunkEntry {
     /// Id of the chunk entry.
-    pub id: u64,
+    pub id: i64,
     /// Chunk size before decompression.
     ///
     /// Mainly used when downloading files.

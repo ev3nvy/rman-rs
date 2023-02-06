@@ -44,7 +44,7 @@ trait MakeHeader {
 trait WriteFile: MakeHeader {
     fn name(&self) -> &str;
 
-    fn write_file(&self, bytes: &[u8]) -> Result<(), Error> {
+    fn write_manifest_file(&self, bytes: &[u8]) -> Result<(), Error> {
         let uncompressed_size = bytes.len();
 
         let compressed = zstd::encode_all(bytes, 19).expect("error compressing");
@@ -57,11 +57,29 @@ trait WriteFile: MakeHeader {
 
         let bytes = [&head[..], &compressed[..]].concat();
 
-        let path = Path::new(env!("OUT_DIR")).join(self.name());
+        let mut path = Path::new(env!("OUT_DIR")).join(self.name());
+        path.set_extension("manifest");
         let mut file = fs::File::create(path)?;
         file.write_all(&bytes)?;
 
         Ok(())
+    }
+
+    fn write_bundle_file(&self, bytes: &[u8]) -> Result<(u32, u32), Error> {
+        let uncompressed_size = bytes.len();
+
+        let compressed = zstd::encode_all(bytes, 19).expect("error compressing");
+        let compressed_size = compressed.len();
+
+        let mut path = Path::new(env!("OUT_DIR")).join(self.name());
+        path.set_extension("bundle");
+        let mut file = fs::File::create(path)?;
+        file.write_all(&compressed)?;
+
+        Ok((
+            compressed_size.try_into().unwrap(),
+            uncompressed_size.try_into().unwrap(),
+        ))
     }
 }
 
@@ -72,7 +90,7 @@ pub struct ValidManifest {
 impl ValidManifest {
     pub fn new() -> Self {
         Self {
-            name: "valid.manifest".to_owned(),
+            name: "valid".to_owned(),
         }
     }
 
@@ -83,24 +101,19 @@ impl ValidManifest {
     pub fn generate(&self) {
         let mut builder = flatbuffers::FlatBufferBuilder::new();
 
-        let chunk_0 = Chunk::create(
+        let bundle_data = vec![b'T', b'E', b'S', b'T'];
+        let (compressed_size, uncompressed_size) = self.write_bundle_file(&bundle_data).unwrap();
+
+        let chunk = Chunk::create(
             &mut builder,
             &ChunkArgs {
                 id: 0,
-                compressed_size: 0,
-                uncompressed_size: 0,
-            },
-        );
-        let chunk_1 = Chunk::create(
-            &mut builder,
-            &ChunkArgs {
-                id: 1,
-                compressed_size: 0,
-                uncompressed_size: 0,
+                compressed_size,
+                uncompressed_size,
             },
         );
 
-        let chunks = Some(builder.create_vector(&[chunk_0, chunk_1]));
+        let chunks = Some(builder.create_vector(&[chunk]));
 
         let bundle_0 = Bundle::create(&mut builder, &BundleArgs { id: 0, chunks });
 
@@ -141,7 +154,7 @@ impl ValidManifest {
 
         let name = Some(builder.create_string("file.txt"));
         let symlink = Some(builder.create_string(""));
-        let chunk_ids = Some(builder.create_vector(&[0u64, 1]));
+        let chunk_ids = Some(builder.create_vector(&[0i64]));
         let file = File::create(
             &mut builder,
             &FileArgs {
@@ -182,7 +195,7 @@ impl ValidManifest {
 
         builder.finish(manifest, None);
 
-        self.write_file(builder.finished_data()).unwrap();
+        self.write_manifest_file(builder.finished_data()).unwrap();
     }
 }
 
@@ -201,7 +214,7 @@ pub struct ValidEmptyManifest {
 impl ValidEmptyManifest {
     pub fn new() -> Self {
         Self {
-            name: "valid_empty.manifest".to_owned(),
+            name: "valid_empty".to_owned(),
         }
     }
 
@@ -233,7 +246,7 @@ impl ValidEmptyManifest {
 
         builder.finish(manifest, None);
 
-        self.write_file(builder.finished_data()).unwrap();
+        self.write_manifest_file(builder.finished_data()).unwrap();
     }
 }
 
