@@ -25,7 +25,7 @@ pub struct File {
     /// A vector of applicable languages.
     pub languages: Vec<String>,
     #[allow(dead_code)]
-    chunks: Vec<(i64, u64, u32, u32)>,
+    chunks: Vec<(i64, u32, u32, u32)>,
 }
 
 impl File {
@@ -66,7 +66,7 @@ impl File {
         file: &FileEntry,
         language_entries: &HashMap<u8, String>,
         directories: &HashMap<i64, (String, i64)>,
-        chunk_entries: &HashMap<i64, (i64, u64, u32, u32)>,
+        chunk_entries: &HashMap<i64, (i64, u32, u32, u32)>,
     ) -> Result<Self> {
         let id = file.id;
         let name = file.name.to_owned();
