@@ -3,7 +3,7 @@ use crate::generated::rman::Directory;
 /// Single directory entry object.
 ///
 /// This is identical to the schema in [rman-schema][rman-schema] and exists to provide a
-/// persistent structure for the DirectoryEntry.
+/// persistent structure for the `DirectoryEntry`.
 ///
 /// [rman-schema]: https://github.com/ev3nvy/rman-schema
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]

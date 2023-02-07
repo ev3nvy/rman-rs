@@ -3,7 +3,7 @@ use crate::generated::rman::Language;
 /// Single language entry object.
 ///
 /// This is identical to the schema in [rman-schema][rman-schema] and exists to provide a
-/// persistent structure for the LanguageEntry.
+/// persistent structure for the `LanguageEntry`.
 ///
 /// [rman-schema]: https://github.com/ev3nvy/rman-schema
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]

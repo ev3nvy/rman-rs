@@ -68,11 +68,12 @@ impl Header {
     /// [`version_error`](index.html#feature-version_error) is enabled, the error
     /// [`InvalidMinor`][crate::ManifestError::InvalidMinor] is returned.
     ///
-    /// If offset is smaller or larger than the file, the error
+    /// If [`offset`](Header::offset) is smaller or larger than the file, the error
     /// [`InvalidOffset`][crate::ManifestError::InvalidOffset] is returned.
     ///
-    /// If compressed_size is smaller or larger than the file, the error
-    /// [`CompressedSizeTooLarge`][crate::ManifestError::CompressedSizeTooLarge] is returned.
+    /// If [`compressed_size`](Header::compressed_size) is smaller or larger than the file, the
+    /// error [`CompressedSizeTooLarge`][crate::ManifestError::CompressedSizeTooLarge] is
+    /// returned.
     pub fn from_reader<R>(reader: &mut R) -> Result<Self>
     where
         R: Read + Seek,

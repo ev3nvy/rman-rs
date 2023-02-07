@@ -3,7 +3,7 @@ use crate::generated::rman::Param;
 /// Single param entry object.
 ///
 /// This is identical to the schema in [rman-schema][rman-schema] and exists to provide a
-/// persistent structure for the ParamEntry.
+/// persistent structure for the `ParamEntry`.
 ///
 /// [rman-schema]: https://github.com/ev3nvy/rman-schema
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]

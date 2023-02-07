@@ -5,7 +5,7 @@ use super::chunk_entry::ChunkEntry;
 /// Single bundle entry object.
 ///
 /// This is identical to the schema in [rman-schema][rman-schema] and exists to provide a
-/// persistent structure for the BundleEntry.
+/// persistent structure for the `BundleEntry`.
 ///
 /// [rman-schema]: https://github.com/ev3nvy/rman-schema
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]

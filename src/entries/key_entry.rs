@@ -3,7 +3,7 @@ use crate::generated::rman::Key;
 /// Single key entry object.
 ///
 /// This is identical to the schema in [rman-schema][rman-schema] and exists to provide a
-/// persistent structure for the KeyEntry.
+/// persistent structure for the `KeyEntry`.
 ///
 /// [rman-schema]: https://github.com/ev3nvy/rman-schema
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]

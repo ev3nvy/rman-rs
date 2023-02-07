@@ -122,7 +122,7 @@
 //! This crate:
 //! - reads the `.manifest` file, and verifies it's a valid `rman` file,
 //! - decompresses the containing data which was compressed using [zstd][zstd],
-//! - parses the decompressed [FlatBuffer][flatbuffers] data,
+//! - parses the decompressed [flatbuffer data][flatbuffers],
 //! - stores all of the parsed data on [`ManifestData`][crate::ManifestData],
 //! - combines the data into a vector of downloadable [`File`][crate::File]s,
 //! - provides a function to [`download`][crate::File::download] specific files.
