@@ -160,7 +160,11 @@ impl File {
     /// # Examples
     ///
     /// See [downloading a file](index.html#example-downloading-a-file).
-    pub async fn download<W: Write, U: IntoUrl>(&self, mut writer: W, bundle_url: U) -> Result<()> {
+    pub async fn download<W: Write + Send, U: IntoUrl + Send>(
+        &self,
+        mut writer: W,
+        bundle_url: U,
+    ) -> Result<()> {
         let client = Client::new();
 
         for (bundle_id, offset, uncompressed_size, compressed_size) in &self.chunks {
