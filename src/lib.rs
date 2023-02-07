@@ -1,6 +1,7 @@
 #![deny(missing_docs)]
 #![deny(missing_debug_implementations)]
-#![deny(clippy::all, clippy::unwrap_used)]
+#![deny(clippy::all, clippy::pedantic, clippy::nursery, clippy::unwrap_used)]
+#![allow(clippy::module_name_repetitions, clippy::similar_names)]
 
 //! # rman
 //!
