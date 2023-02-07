@@ -75,12 +75,12 @@ impl File {
         chunk_entries: &HashMap<i64, (i64, u32, u32, u32)>,
     ) -> Result<Self> {
         let id = file.id;
-        let name = file.name.to_owned();
+        let name = file.name.clone();
         let permissions = file.permissions;
         let size = file.size;
-        let symlink = file.symlink.to_owned();
+        let symlink = file.symlink.clone();
         let language_mask = file.language_mask;
-        let chunk_ids = file.chunk_ids.to_owned();
+        let chunk_ids = &file.chunk_ids;
 
         let mut directory_id = file.directory_id;
         let mut path = String::new();
@@ -104,14 +104,14 @@ impl File {
             }
 
             if let Some(lang_name) = language_entries.get(&(i + 1)) {
-                languages.push(lang_name.to_owned());
+                languages.push(lang_name.clone());
             }
         }
 
         let mut chunks = Vec::new();
 
         for chunk_id in chunk_ids {
-            let Some(chunk) = chunk_entries.get(&chunk_id) else {
+            let Some(chunk) = chunk_entries.get(chunk_id) else {
                 let message = format!("Could not find a chunk with the following id: \"{chunk_id}\".");
                 return Err(ManifestError::FileParseError(message));
             };
