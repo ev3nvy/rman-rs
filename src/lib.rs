@@ -1,5 +1,5 @@
 #![deny(missing_docs)]
-#![deny(missing_debug_implementations)]
+#![deny(missing_debug_implementations, missing_copy_implementations)]
 #![deny(clippy::all, clippy::pedantic, clippy::nursery, clippy::unwrap_used)]
 #![allow(clippy::module_name_repetitions, clippy::similar_names)]
 
@@ -168,8 +168,9 @@ mod file;
 mod parser;
 
 mod generated {
+    #![allow(warnings)]
+    #![allow(missing_debug_implementations, missing_copy_implementations)]
     #![allow(clippy::all, clippy::pedantic, clippy::nursery, clippy::unwrap_used)]
-    #![allow(missing_debug_implementations, unused_imports)]
     include!(concat!(env!("OUT_DIR"), "/schema_generated.rs"));
 }
 

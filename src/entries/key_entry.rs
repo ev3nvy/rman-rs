@@ -7,7 +7,7 @@ use crate::generated::rman::Key;
 ///
 /// [rman-schema]: https://github.com/ev3nvy/rman-schema
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[derive(Debug, Default, Clone, PartialEq, Eq)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub struct KeyEntry {
     /// Field with an unknown function and type (it might also be an [`i16`]).
     pub unk0: u16,
