@@ -1,0 +1,70 @@
+name: Bug Report
+description: File a bug report
+labels: ["status: needs triage", "type: bug"]
+body:
+  - type: checkboxes
+    id: tasks
+    attributes:
+      label: Please complete the following tasks
+      options:
+        - label: I have searched for any [existing issues](https://github.com/ev3nvy/rman-rs/issues?q=is%3Aissue)
+          required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Brief summary of what happened and when it happened.
+    validations:
+      required: true
+  - type: textarea
+    id: what-was-expected
+    attributes:
+      label: What did you expect to see?
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      description: What operating system are you using?
+      options:
+        - Windows 11
+        - Windows 10
+        - other Windows (specify which below)
+        - macOS 13 (Ventura)
+        - macOS 12 (Monterey)
+        - macOS 11 (Big Sur)
+        - other macOS (specify which below)
+        - Linux (specify which flavor below)
+        - Other (specify which below)
+  - type: input
+    id: os-other
+    attributes:
+      label: Other OS info
+      desctiption: 'Extra information about the OS (if applicable):'
+  - type: input
+    id: rust-version
+    attributes:
+      label: Rust version
+      description: Use `rustc --version` to get the version.
+    validations:
+      required: true
+  - type: input
+    id: crate-version
+    attributes:
+      label: `rman` version
+      description: Which version of the `rman` crate are you using?
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Please copy and paste any relevant output from when the error occured. This will be automatically formatted into code, so no need for backticks.
+      render: shell
+  - type: textarea
+    id: other
+    attributes:
+      label: Other information
+      description: If you have any other relevant information you can provide it below.
+      placeholder: Other relevant information goes here

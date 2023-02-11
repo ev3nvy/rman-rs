@@ -1,0 +1,43 @@
+name: Bug Report
+description: File a bug report
+labels: ["status: needs triage", "type: bug"]
+body:
+  - type: checkboxes
+    id: tasks
+    attributes:
+      label: Please complete the following tasks
+      options:
+        - label: I have searched for any [existing issues](https://github.com/ev3nvy/rman-rs/issues?q=is%3Aissue)
+          required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Describe what the problem or annoyance, you are facing, is.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solution
+      description: Describe how you would like the problem to be solved, or what the solution would preferably look like.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative solutions
+      description: Describe other, alternative, solutions that would also solve the problem.
+  - type: input
+    id: crate-version
+    attributes:
+      label: `rman` version
+      description: Which version of the `rman` crate are you using?
+    validations:
+      required: true
+  - type: textarea
+    id: other
+    attributes:
+      label: Other information
+      description: If you have any other relevant information you can provide it below.
+      placeholder: Other relevant information goes here
