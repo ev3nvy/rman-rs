@@ -2,7 +2,5 @@ target/
 
 Cargo.lock
 
-*.manifest
-
 .idea
 .env
