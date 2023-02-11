@@ -49,10 +49,7 @@ impl RiotManifest {
     /// [parsing a manifest file from path](index.html#example-parsing-a-manifest-file-from-path).
     ///
     /// [`RiotManifest::from_reader`]: crate::RiotManifest::from_reader
-    pub fn from_path<P>(path: P) -> Result<Self>
-    where
-        P: AsRef<Path>,
-    {
+    pub fn from_path<P: AsRef<Path>>(path: P) -> Result<Self> {
         let file = fs::File::open(path)?;
         let mut reader = BufReader::new(file);
         Self::from_reader(&mut reader)
@@ -90,11 +87,8 @@ impl RiotManifest {
     /// [`ManifestData::parse`][crate::ManifestData::parse].
     ///
     /// [flatbuffer binary]: https://github.com/ev3nvy/rman-schema
-    pub fn from_reader<R>(reader: &mut R) -> Result<Self>
-    where
-        R: Read + Seek,
-    {
-        let header = Header::from_reader(reader)?;
+    pub fn from_reader<R: Read + Seek>(mut reader: R) -> Result<Self> {
+        let header = Header::from_reader(&mut reader)?;
 
         if let Err(error) = reader.seek(SeekFrom::Start(header.offset.into())) {
             return Err(ManifestError::SeekError(error));

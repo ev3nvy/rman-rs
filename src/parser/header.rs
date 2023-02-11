@@ -1,3 +1,4 @@
+use std::borrow::BorrowMut;
 use std::io::{Read, Seek};
 
 use byteorder::{ReadBytesExt, LE};
@@ -74,12 +75,9 @@ impl Header {
     /// If [`compressed_size`](Header::compressed_size) is smaller or larger than the file, the
     /// error [`CompressedSizeTooLarge`][crate::ManifestError::CompressedSizeTooLarge] is
     /// returned.
-    pub fn from_reader<R>(reader: &mut R) -> Result<Self>
-    where
-        R: Read + Seek,
-    {
+    pub fn from_reader<R: Read + Seek>(mut reader: R) -> Result<Self> {
         debug!("Attempting to convert \"reader.bytes().count()\" into \"u32\".");
-        let size: u32 = reader.bytes().count().try_into()?;
+        let size: u32 = reader.borrow_mut().bytes().count().try_into()?;
         debug!("Successfully converted \"reader.bytes().count()\" into \"u32\".");
 
         debug!("The file is {size} bytes in size");
