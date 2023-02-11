@@ -1,5 +1,5 @@
 #![deny(missing_docs)]
-#![deny(missing_debug_implementations)]
+#![deny(missing_debug_implementations, missing_copy_implementations)]
 #![deny(clippy::all, clippy::pedantic, clippy::nursery, clippy::unwrap_used)]
 #![allow(clippy::module_name_repetitions, clippy::similar_names)]
 
@@ -30,15 +30,19 @@
 //! internally, so everything from [`&str`][str] to [`PathBuf`][std::path::PathBuf] is a valid
 //! argument.
 //!
-//! ```
+//! ```rust
+//! # use rman::Result;
 //! use rman::RiotManifest;
 //!
+//! # fn main() -> Result<()> {
 //! let path = "file.manifest";
-//! # let path = concat!(env!("OUT_DIR"), "/valid.manifest");
+//!   # let path = concat!(env!("OUT_DIR"), "/valid.manifest");
 //!
-//! let manifest = RiotManifest::from_path(path).unwrap();
+//! let manifest = RiotManifest::from_path(path)?;
 //!
 //! assert_eq!(manifest.data.files.len(), 1);
+//!   # Ok(())
+//! # }
 //! ```
 //!
 //! # Example: parsing a manifest file from reader
@@ -49,20 +53,24 @@
 //! Internally, this is what [`from_path`](crate::RiotManifest::from_path) calls, so the response
 //! of the two functions should be identical.
 //!
-//! ```
+//! ```rust
 //! use std::fs;
 //! use std::io::BufReader;
 //!
+//! # use rman::Result;
 //! use rman::RiotManifest;
 //!
+//! # fn main() -> Result<()> {
 //! let path = "file.manifest";
-//! # let path = concat!(env!("OUT_DIR"), "/valid.manifest");
-//! let file = fs::File::open(path).unwrap();
+//!   # let path = concat!(env!("OUT_DIR"), "/valid.manifest");
+//! let file = fs::File::open(path)?;
 //! let mut reader = BufReader::new(file);
 //!
-//! let manifest = RiotManifest::from_reader(&mut reader).unwrap();
+//! let manifest = RiotManifest::from_reader(&mut reader)?;
 //!
 //! assert_eq!(manifest.data.files.len(), 1);
+//!   # Ok(())
+//! # }
 //! ```
 //!
 //! # Example: downloading a file
@@ -70,7 +78,7 @@
 //! To download a specific file from a parsed manifest, you can invoke the
 //! [download function](crate::File::download) on that [file][crate::File].
 //!
-//! ```
+//! ```rust
 //! use std::fs;
 //!
 //! # use httptest::{matchers::*, responders::*, Expectation, Server};
@@ -168,8 +176,9 @@ mod file;
 mod parser;
 
 mod generated {
+    #![allow(warnings)]
+    #![allow(missing_debug_implementations, missing_copy_implementations)]
     #![allow(clippy::all, clippy::pedantic, clippy::nursery, clippy::unwrap_used)]
-    #![allow(missing_debug_implementations, unused_imports)]
     include!(concat!(env!("OUT_DIR"), "/schema_generated.rs"));
 }
 

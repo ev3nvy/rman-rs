@@ -7,7 +7,7 @@ use crate::generated::rman::Chunk;
 ///
 /// [rman-schema]: https://github.com/ev3nvy/rman-schema
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[derive(Debug, Default, Clone, PartialEq, Eq)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub struct ChunkEntry {
     /// Id of the chunk entry.
     pub id: i64,

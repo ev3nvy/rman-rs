@@ -9,7 +9,7 @@ pub enum ManifestError {
     /// The error was caused by a failure to seek to a desired offset.
     ///
     /// This error occurs when [`Seek`][std::io::Seek] fails.
-    #[error("Could not seek to desired position. Error: {0}")]
+    #[error("could not seek to desired position, error: {0}")]
     SeekError(std::io::Error),
     /// The error was caused by invalid magic bytes.
     ///
@@ -17,7 +17,7 @@ pub enum ManifestError {
     /// `0x41` and `0x4E` (or `R`, `M`, `A`, `N` in ascii) respectively.
     ///
     /// Usually caused by providing a file that is not a Riot Manifest file.
-    #[error("Invalid magic bytes (expected: \"0x4E414D52\", was: \"{0:#010x}\").")]
+    #[error("invalid magic bytes (expected: \"0x4E414D52\", was: \"{0:#010x}\")")]
     InvalidMagicBytes(u32),
     /// The error was caused by invalid major version.
     ///
@@ -27,8 +27,8 @@ pub enum ManifestError {
     /// may no longer function if this happens.
     ///
     /// NOTE: The feature `version_error` must be enabled for this error to occur.
-    #[error("Unsupported major version (expected: \"2\", was: \"{0}\").")]
-    #[cfg(feature = "version_error")]
+    #[error("unsupported major version (expected: \"2\", was: \"{0}\")")]
+    #[cfg(any(feature = "version_error", doc))]
     InvalidMajor(u8),
     /// The error was caused by invalid minor version.
     ///
@@ -38,22 +38,22 @@ pub enum ManifestError {
     /// should still be functional if this happens,
     ///
     /// NOTE: The feature `version_error` must be enabled for this error to occur.
-    #[error("Unsupported minor version (expected: \"0\", was: \"{0}\").")]
-    #[cfg(feature = "version_error")]
+    #[error("unsupported minor version (expected: \"0\", was: \"{0}\")")]
+    #[cfg(any(feature = "version_error", doc))]
     InvalidMinor(u8),
     /// The error was caused by an invalid offset.
     ///
     /// This error occurs when the offset is smaller or larger than the file itself.
     ///
     /// Should never happen for official, Riot-made manifests.
-    #[error("Offset ({0}) is larger than the total file size.")]
+    #[error("offset ({0}) is larger than the total file size")]
     InvalidOffset(u32),
     /// The error was caused by compressed size being too large.
     ///
     /// This error occurs when the compressed size is larger than the file itself.
     ///
     /// Should never happen for official, Riot-made manifests.
-    #[error("Compressed size ({0}) is larger than the total file size.")]
+    #[error("compressed size ({0}) is larger than the total file size")]
     CompressedSizeTooLarge(u32),
     /// The error was caused by a failure to read or write bytes on an IO stream.
     ///
@@ -68,7 +68,7 @@ pub enum ManifestError {
     /// This error occurs when the conversion from or into [`usize`] fails.
     ///
     /// Should never fail on 32-bit (or higher) targets.
-    #[error("Conversion failed. Error: {0}")]
+    #[error("conversion failed, error: {0}")]
     ConversionFailure(#[from] std::num::TryFromIntError),
     /// The error was caused by a failure to decompress zstd data.
     ///
