@@ -15,7 +15,7 @@ env:
 
 jobs:
   check:
-    name: Check
+    name: cargo check
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -54,7 +54,7 @@ jobs:
         run: cargo check
 
   fmt:
-    name: Check style
+    name: cargo fmt
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -75,7 +75,7 @@ jobs:
         run: cargo fmt -- --check
 
   clippy:
-    name: Clippy
+    name: cargo clippy
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
