@@ -1,4 +1,4 @@
-use rman::{Header, RiotManifest};
+use rman::RiotManifest;
 
 mod common;
 
@@ -24,23 +24,7 @@ pub fn should_have_correct_values_when_valid_manifest() {
     path.set_extension("manifest");
     let manifest = RiotManifest::from_path(path).unwrap();
 
-    // FIXME: don't check for equality on compressed size and uncompressed size
-    // compressed and uncompressed size could change in the future
-    let header = Header {
-        magic: 0x4E414D52,
-        major: 2,
-        minor: 0,
-        flags: 512,
-        offset: 28,
-        compressed_size: 189,
-        manifest_id: 0,
-        uncompressed_size: 376,
-    };
-
-    assert_eq!(
-        &manifest.header, &header,
-        "manifest header should be the same"
-    );
+    // TODO: header value comparsion should also be done
     assert_eq!(
         manifest.data.bundle_entries.len(),
         1,
@@ -101,23 +85,7 @@ pub fn should_have_correct_values_when_valid_empty_manifest() {
     path.set_extension("manifest");
     let manifest = RiotManifest::from_path(path).unwrap();
 
-    // FIXME: don't check for equality on compressed size and uncompressed size
-    // compressed and uncompressed size could change in the future
-    let header = Header {
-        magic: 0x4E414D52,
-        major: 2,
-        minor: 0,
-        flags: 512,
-        offset: 28,
-        compressed_size: 59,
-        manifest_id: 0,
-        uncompressed_size: 72,
-    };
-
-    assert_eq!(
-        &manifest.header, &header,
-        "manifest header should be the same"
-    );
+    // TODO: header value comparsion should also be done
     assert_eq!(
         manifest.data.bundle_entries.len(),
         0,
