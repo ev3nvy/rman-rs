@@ -3,7 +3,15 @@ name: CI
 permissions:
   contents: read
 
-on: [pull_request, push]
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+env:
+  CARGO_TERM_COLOR: always
+  CLICOLOR: 1
 
 jobs:
   check:
