@@ -41,7 +41,7 @@ body:
     id: os-other
     attributes:
       label: Other OS info
-      desctiption: 'Extra information about the OS (if applicable):'
+      description: 'Extra information about the OS (if applicable):'
   - type: input
     id: rust-version
     attributes:
