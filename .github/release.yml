@@ -1,0 +1,26 @@
+changelog:
+  categories:
+    - title: 🐛 Bug fixes
+      labels:
+        - 'type: bug'
+    - title: 📦 Chore
+      labels:
+        - 'type: chore'
+    - title: 🧑‍💻 Code refactor
+      labels:
+        - 'type: refactor'
+    - title: 🔁 Continuous Integration
+      labels:
+        - 'type: CI'
+    - title: 📝 Documentation
+      labels:
+        - 'type: docs'
+    - title: 🏕 Features
+      labels:
+        - 'type: feature'
+    - title: 🔥 Performance improvements
+      labels:
+        - 'type: performance'
+    - title: ✅ Test
+      labels:
+        - 'type: test'
