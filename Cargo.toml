@@ -1,13 +1,30 @@
 [package]
-name = "rman-rs"
+name = "rman"
 version = "0.1.0"
+authors = ["ev3nvy"]
 edition = "2021"
+description = "Parser for Riot Manifest file format."
+repository = "https://github.com/ev3nvy/rman-rs"
+license = "MIT OR Apache-2.0"
+keywords = ["rman", "riot", "rito", "manifest", "riot-manifest"]
+categories = ["data-structures", "encoding", "parser-implementations"]
 
 [dependencies]
+byteorder = "1.4.3"
 flatbuffers = "22.10.26"
-paste = "1.0.11"
+log = "0.4.17"
+reqwest = { version = "0.11.14", default_features = false }
+serde = { version = "1.0.152", features = ["derive"], optional = true }
+thiserror = "1.0.38"
 zstd = "0.12.1"
 
+[dev-dependencies]
+httptest = "0.15.4"
+tokio = { version = "1.25.0", default_features = false, features = ["macros", "rt-multi-thread"] }
+
 [features]
-default = []
+default = ["rustls-tls"]
 version_error = []
+serde = ["dep:serde"]
+native-tls = ["reqwest/native-tls"]
+rustls-tls = ["reqwest/rustls-tls"]
