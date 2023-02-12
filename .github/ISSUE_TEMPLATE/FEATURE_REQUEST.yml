@@ -1,6 +1,6 @@
-name: Bug Report
-description: File a bug report
-labels: ["status: needs triage", "type: bug"]
+name: Feature request
+description: Request a new feature
+labels: ["status: needs triage", "type: feature"]
 body:
   - type: checkboxes
     id: tasks
