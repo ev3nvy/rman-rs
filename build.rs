@@ -6,7 +6,13 @@ fn main() {
     println!("cargo:rerun-if-changed=rman-schema/schema.fbs");
     let path = env::var_os("OUT_DIR").unwrap();
 
-    Command::new("flatc")
+    #[cfg(target_os = "windows")]
+    let flatc = "./flatc/Windows.flatc.binary/flatc.exe";
+    #[cfg(target_os = "macos")]
+    let flatc = "./flatc/Mac.flatc.binary/flatc";
+    #[cfg(target_os = "linux")]
+    let flatc = "./flatc/Linux.flatc.binary.clang++-12/flatc";
+    Command::new(flatc)
         .args([
             "--rust",
             "-o",
