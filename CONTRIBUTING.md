@@ -11,9 +11,9 @@ Prerequisites:
   used for installation)
   - [rust-fmt](https://github.com/rust-lang/rustfmt) (installed alongside rust if `rustup` was
   used for installation)
-  - [flatc](https://github.com/google/flatbuffers) (see
-  [`Building` section](https://github.com/ev3nvy/rman-schema#building) in
-  [rman-schema](https://github.com/ev3nvy/rman-schema))
+
+> This project ships with [`flatc`](https://github.com/google/flatbuffers) binaries for `Windows`, `macOS` and `Linux`, if you encounter
+any issues during the build process, please open up an issue.
 
 ### 1. Clone the project:
 
