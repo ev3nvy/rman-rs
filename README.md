@@ -9,9 +9,6 @@
 
 </div>
 
-<!--
-Depending on how clutered this looks on github with working links, these 4 might get removed:
--->
 <div align="center">
 
 [![crates.io](https://img.shields.io/crates/d/rman?style=for-the-badge)][crates-io]
@@ -37,6 +34,9 @@ Layout of the [.manifest][manifest] file is as follows:
 Decompressed [zstd][zstd] data is a binary [flatbuffer][flatbuffers] format. This crate uses
 [generated code](src/generated/flatbuffer.rs) from a mostly complete schema over at
 [this repository][rman-schema].
+
+[rman-schema][rman-schema] repository is only added as a submodule as a way to track which schema
+version is used.
 
 ## Status
 
