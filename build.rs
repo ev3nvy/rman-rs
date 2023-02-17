@@ -9,6 +9,7 @@
 #[allow(warnings)]
 #[allow(missing_debug_implementations, missing_copy_implementations)]
 #[allow(clippy::all, clippy::pedantic, clippy::nursery, clippy::unwrap_used)]
+#[rustfmt::skip]
 #[path = "./src/generated/schema_generated.rs"]
 mod schema_generated;
 
@@ -17,9 +18,6 @@ use std::path::Path;
 use std::{env, fs};
 
 mod generated {
-    #![allow(warnings)]
-    #![allow(missing_debug_implementations, missing_copy_implementations)]
-    #![allow(clippy::all, clippy::pedantic, clippy::nursery, clippy::unwrap_used)]
     pub use super::schema_generated::rman;
 }
 
