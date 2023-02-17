@@ -11,12 +11,12 @@ mod generated {
 use flatbuffers::WIPOffset;
 use generated::rman::{Bundle, BundleArgs};
 use generated::rman::{Chunk, ChunkArgs};
+use generated::rman::{ChunkingParam, ChunkingParamArgs};
 use generated::rman::{Directory, DirectoryArgs};
 use generated::rman::{File, FileArgs};
 use generated::rman::{Key, KeyArgs};
-use generated::rman::{Language, LanguageArgs};
 use generated::rman::{Manifest, ManifestArgs};
-use generated::rman::{Param, ParamArgs};
+use generated::rman::{Tag, TagArgs};
 
 trait MakeHeader {
     fn make_header(&self, compressed_size: u32, uncompressed_size: u32) -> Vec<u8> {
@@ -137,13 +137,13 @@ impl ValidManifest {
         );
 
         let name = Some(builder.create_string("en_US"));
-        let lang_en_us = Language::create(&mut builder, &LanguageArgs { id: 0, name });
+        let tag_en_us = Tag::create(&mut builder, &TagArgs { id: 0, name });
 
         let key_0 = Key::create(&mut builder, &KeyArgs { unk0: 1, unk1: 4 });
 
-        let param_0 = Param::create(
+        let param_0 = ChunkingParam::create(
             &mut builder,
-            &ParamArgs {
+            &ChunkingParamArgs {
                 unk0: 0,
                 chunking_version: 3,
                 min_chunk_size: 2,
@@ -162,34 +162,34 @@ impl ValidManifest {
                 directory_id: 1,
                 size_: 0,
                 name,
-                language_mask: 0,
+                tag_bitmask: 0,
                 unk5: 0,
                 unk6: 0,
                 chunk_ids,
                 unk8: 0,
                 symlink,
                 unk10: 0,
-                param_id: 0,
+                chunking_param_id: 0,
                 permissions: 0,
             },
         );
 
         let bundles = Some(builder.create_vector(&[bundle_0]));
-        let languages = Some(builder.create_vector(&[lang_en_us]));
+        let tags = Some(builder.create_vector(&[tag_en_us]));
         let files = Some(builder.create_vector(&[file]));
         let directories = Some(builder.create_vector(&[dir_root, dir_test]));
         let keys = Some(builder.create_vector(&[key_0]));
-        let params = Some(builder.create_vector(&[param_0]));
+        let chunking_params = Some(builder.create_vector(&[param_0]));
 
         let manifest = Manifest::create(
             &mut builder,
             &ManifestArgs {
                 bundles,
-                languages,
+                tags,
                 files,
                 directories,
                 keys,
-                params,
+                chunking_params,
             },
         );
 
@@ -226,21 +226,21 @@ impl ValidEmptyManifest {
         let mut builder = flatbuffers::FlatBufferBuilder::new();
 
         let bundles = Some(builder.create_vector::<WIPOffset<Bundle>>(&[]));
-        let languages = Some(builder.create_vector::<WIPOffset<Language>>(&[]));
+        let tags = Some(builder.create_vector::<WIPOffset<Tag>>(&[]));
         let files = Some(builder.create_vector::<WIPOffset<File>>(&[]));
         let directories = Some(builder.create_vector::<WIPOffset<Directory>>(&[]));
         let keys = Some(builder.create_vector::<WIPOffset<Key>>(&[]));
-        let params = Some(builder.create_vector::<WIPOffset<Param>>(&[]));
+        let chunking_params = Some(builder.create_vector::<WIPOffset<ChunkingParam>>(&[]));
 
         let manifest = Manifest::create(
             &mut builder,
             &ManifestArgs {
                 bundles,
-                languages,
+                tags,
                 files,
                 directories,
                 keys,
-                params,
+                chunking_params,
             },
         );
 

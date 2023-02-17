@@ -28,8 +28,8 @@ pub struct File {
     pub path: String,
     /// Symbolic link of the file.
     pub symlink: String,
-    /// A vector of applicable languages.
-    pub languages: Vec<String>,
+    /// A vector of applicable tags.
+    pub tags: Vec<String>,
     #[allow(dead_code)]
     chunks: Vec<(i64, u32, u32, u32)>,
 }
@@ -41,9 +41,9 @@ impl File {
     /// [`HashMap`]s used for fast lookups for the required data.
     ///
     /// Here is how they are structured:
-    /// - Parameter `language_entries` is a [`HashMap`] where the key is a
-    /// [language id](crate::entries::LanguageEntry::id) and the value is a
-    /// [language name](crate::entries::LanguageEntry::name).
+    /// - Parameter `tag_entries` is a [`HashMap`] where the key is a
+    /// [tag id](crate::entries::TagEntry::id) and the value is a
+    /// [tag name](crate::entries::TagEntry::name).
     ///
     /// - Parameter `directories` is a [`HashMap`] where the key is a
     /// [directory id](crate::entries::DirectoryEntry::id) and the value is a tuple of:
@@ -70,7 +70,7 @@ impl File {
     /// returned.
     pub fn parse(
         file: &FileEntry,
-        language_entries: &HashMap<u8, String>,
+        tag_entries: &HashMap<u8, String>,
         directories: &HashMap<i64, (String, i64)>,
         chunk_entries: &HashMap<i64, (i64, u32, u32, u32)>,
     ) -> Result<Self> {
@@ -79,7 +79,7 @@ impl File {
         let permissions = file.permissions;
         let size = file.size;
         let symlink = file.symlink.clone();
-        let language_mask = file.language_mask;
+        let tag_bitmask = file.tag_bitmask;
         let chunk_ids = &file.chunk_ids;
 
         let mut directory_id = file.directory_id;
@@ -96,15 +96,15 @@ impl File {
 
         path.push_str(&name);
 
-        let mut languages = Vec::new();
+        let mut tags = Vec::new();
 
         for i in 0..64 {
-            if (language_mask & (1u64 << i)) == 0 {
+            if (tag_bitmask & (1u64 << i)) == 0 {
                 continue;
             }
 
-            if let Some(lang_name) = language_entries.get(&(i + 1)) {
-                languages.push(lang_name.clone());
+            if let Some(tag_name) = tag_entries.get(&(i + 1)) {
+                tags.push(tag_name.clone());
             }
         }
 
@@ -125,7 +125,7 @@ impl File {
             size,
             path,
             symlink,
-            languages,
+            tags,
             chunks,
         };
         Ok(file)

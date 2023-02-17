@@ -17,8 +17,8 @@ pub struct FileEntry {
     pub size: u32,
     /// Name of the file entry.
     pub name: String,
-    /// Applicable languages, stored as a bit mask.
-    pub language_mask: u64,
+    /// Applicable tags, stored as a bitmask.
+    pub tag_bitmask: u64,
     /// Field with an unknown function and type (it might also be an [`i8`]).
     pub unk5: u8,
     /// Field with an unknown function and type (it might also be an [`i8`]).
@@ -33,8 +33,8 @@ pub struct FileEntry {
     pub symlink: String,
     /// Field with an unknown function and type (it might also be an [`i16`]).
     pub unk10: u16,
-    /// Id of the param entry, which provides info about content-defined chunking.
-    pub param_id: u8,
+    /// Id of the chunking param entry, which provides info about content-defined chunking.
+    pub chunking_param_id: u8,
     /// Permissions for the given file entry.
     pub permissions: u8,
 }
@@ -45,14 +45,14 @@ impl From<File<'_>> for FileEntry {
         let directory_id = file.directory_id();
         let size = file.size_();
         let name = file.name().unwrap_or_default().to_owned();
-        let language_mask = file.language_mask();
+        let tag_bitmask = file.tag_bitmask();
         let unk5 = file.unk5();
         let unk6 = file.unk6();
         let chunk_ids = file.chunk_ids().unwrap_or_default();
         let unk8 = file.unk8();
         let symlink = file.symlink().unwrap_or_default().to_owned();
         let unk10 = file.unk10();
-        let param_id = file.param_id();
+        let chunking_param_id = file.chunking_param_id();
         let permissions = file.permissions();
 
         let chunk_ids = chunk_ids.iter().collect();
@@ -62,14 +62,14 @@ impl From<File<'_>> for FileEntry {
             directory_id,
             size,
             name,
-            language_mask,
+            tag_bitmask,
             unk5,
             unk6,
             chunk_ids,
             unk8,
             symlink,
             unk10,
-            param_id,
+            chunking_param_id,
             permissions,
         }
     }

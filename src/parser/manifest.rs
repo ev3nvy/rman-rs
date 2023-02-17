@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 
-use crate::entries::{BundleEntry, DirectoryEntry, FileEntry, KeyEntry, LanguageEntry, ParamEntry};
+use crate::entries::{
+    BundleEntry, ChunkingParamEntry, DirectoryEntry, FileEntry, KeyEntry, TagEntry,
+};
 use crate::generated::rman::root_as_manifest;
 use crate::File;
 use crate::Result;
@@ -16,10 +18,10 @@ pub struct ManifestData {
     pub file_entries: Vec<FileEntry>,
     /// Vector of [key entries][crate::entries::KeyEntry].
     pub key_entries: Vec<KeyEntry>,
-    /// Vector of [language entries][crate::entries::LanguageEntry].
-    pub language_entries: Vec<LanguageEntry>,
-    /// Vector of [param entries][crate::entries::ParamEntry].
-    pub param_entries: Vec<ParamEntry>,
+    /// Vector of [tag entries][crate::entries::TagEntry].
+    pub tag_entries: Vec<TagEntry>,
+    /// Vector of [chunking param entries][crate::entries::ChunkingParamEntry].
+    pub chunking_param_entries: Vec<ChunkingParamEntry>,
     /// Vector of [files][crate::File].
     pub files: Vec<File>,
 }
@@ -59,16 +61,16 @@ impl ManifestData {
         let directory_entries: Vec<_> = map_vector!(manifest, directories, DirectoryEntry);
         let file_entries: Vec<_> = map_vector!(manifest, files, FileEntry);
         let key_entries = map_vector!(manifest, keys, KeyEntry);
-        let language_entries: Vec<_> = map_vector!(manifest, languages, LanguageEntry);
-        let param_entries = map_vector!(manifest, params, ParamEntry);
+        let tag_entries: Vec<_> = map_vector!(manifest, tags, TagEntry);
+        let chunking_param_entries = map_vector!(manifest, chunking_params, ChunkingParamEntry);
 
-        let mapped_languages = Self::map_languages(&language_entries);
+        let mapped_tags = Self::map_tags(&tag_entries);
         let mapped_directories = Self::map_directories(&directory_entries);
         let mapped_chunks = Self::map_chunks(&bundle_entries);
 
         let files = file_entries
             .iter()
-            .map(|f| File::parse(f, &mapped_languages, &mapped_directories, &mapped_chunks))
+            .map(|f| File::parse(f, &mapped_tags, &mapped_directories, &mapped_chunks))
             .collect::<Result<Vec<File>>>()?;
 
         Ok(Self {
@@ -76,17 +78,14 @@ impl ManifestData {
             directory_entries,
             file_entries,
             key_entries,
-            language_entries,
-            param_entries,
+            tag_entries,
+            chunking_param_entries,
             files,
         })
     }
 
-    fn map_languages(language_entries: &[LanguageEntry]) -> HashMap<u8, String> {
-        language_entries
-            .iter()
-            .map(|l| (l.id, l.name.clone()))
-            .collect()
+    fn map_tags(tag_entries: &[TagEntry]) -> HashMap<u8, String> {
+        tag_entries.iter().map(|l| (l.id, l.name.clone())).collect()
     }
 
     fn map_directories(directory_entries: &[DirectoryEntry]) -> HashMap<i64, (String, i64)> {

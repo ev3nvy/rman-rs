@@ -52,14 +52,14 @@ pub fn should_have_correct_values_when_valid_manifest() {
         "should have 1 key entry"
     );
     assert_eq!(
-        manifest.data.language_entries.len(),
+        manifest.data.tag_entries.len(),
         1,
-        "should have 1 language entries"
+        "should have 1 tag entry"
     );
     assert_eq!(
-        manifest.data.param_entries.len(),
+        manifest.data.chunking_param_entries.len(),
         1,
-        "should have 1 param entry"
+        "should have 1 chunking param entry"
     );
 }
 
@@ -108,13 +108,13 @@ pub fn should_have_correct_values_when_valid_empty_manifest() {
         "should have 0 key entries"
     );
     assert_eq!(
-        manifest.data.language_entries.len(),
+        manifest.data.tag_entries.len(),
         0,
-        "should have 0 language entries"
+        "should have 0 tag entries"
     );
     assert_eq!(
-        manifest.data.param_entries.len(),
+        manifest.data.chunking_param_entries.len(),
         0,
-        "should have 0 param entries"
+        "should have 0 chunking param entries"
     );
 }
