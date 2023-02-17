@@ -22,7 +22,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.RMAN_SCHEMA_PAT }}
           submodules: true
 
       - name: Install rust
@@ -41,7 +40,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.RMAN_SCHEMA_PAT }}
           submodules: true
 
       - name: Install rust
@@ -62,7 +60,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.RMAN_SCHEMA_PAT }}
           submodules: true
 
       - name: Install rust
@@ -83,7 +80,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.RMAN_SCHEMA_PAT }}
           submodules: true
 
       - name: Install rust
@@ -105,7 +101,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.RMAN_SCHEMA_PAT }}
           submodules: true
 
       - name: Install rust
