@@ -173,14 +173,8 @@
 pub mod entries;
 mod error;
 mod file;
+mod generated;
 mod parser;
-
-mod generated {
-    #![allow(warnings)]
-    #![allow(missing_debug_implementations, missing_copy_implementations)]
-    #![allow(clippy::all, clippy::pedantic, clippy::nursery, clippy::unwrap_used)]
-    include!(concat!(env!("OUT_DIR"), "/schema_generated.rs"));
-}
 
 pub use crate::error::{ManifestError, Result};
 pub use crate::file::File;

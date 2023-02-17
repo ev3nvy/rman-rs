@@ -1,13 +1,8 @@
 use rman::RiotManifest;
 
-mod common;
-
 #[test]
 pub fn should_parse_from_path_when_valid_manifest() {
-    let valid_file = common::ValidManifest::new();
-    valid_file.generate();
-    let mut path = valid_file.path();
-    path.set_extension("manifest");
+    let path = concat!(env!("OUT_DIR"), "/valid.manifest");
     if let Err(error) = RiotManifest::from_path(path) {
         panic!(
             "there was an error when trying to parse the manifest, manifest: {:?}",
@@ -18,10 +13,7 @@ pub fn should_parse_from_path_when_valid_manifest() {
 
 #[test]
 pub fn should_have_correct_values_when_valid_manifest() {
-    let valid_file = common::ValidManifest::new();
-    valid_file.generate();
-    let mut path = valid_file.path();
-    path.set_extension("manifest");
+    let path = concat!(env!("OUT_DIR"), "/valid.manifest");
     let manifest = RiotManifest::from_path(path).unwrap();
 
     // TODO: header value comparsion should also be done
@@ -65,10 +57,7 @@ pub fn should_have_correct_values_when_valid_manifest() {
 
 #[test]
 pub fn should_parse_from_path_when_valid_empty_manifest() {
-    let valid_empty_file = common::ValidEmptyManifest::new();
-    valid_empty_file.generate();
-    let mut path = valid_empty_file.path();
-    path.set_extension("manifest");
+    let path = concat!(env!("OUT_DIR"), "/valid_empty.manifest");
     if let Err(error) = RiotManifest::from_path(path) {
         panic!(
             "there was an error when trying to parse the manifest, manifest: {:?}",
@@ -79,10 +68,7 @@ pub fn should_parse_from_path_when_valid_empty_manifest() {
 
 #[test]
 pub fn should_have_correct_values_when_valid_empty_manifest() {
-    let valid_empty_file = common::ValidEmptyManifest::new();
-    valid_empty_file.generate();
-    let mut path = valid_empty_file.path();
-    path.set_extension("manifest");
+    let path = concat!(env!("OUT_DIR"), "/valid_empty.manifest");
     let manifest = RiotManifest::from_path(path).unwrap();
 
     // TODO: header value comparsion should also be done
