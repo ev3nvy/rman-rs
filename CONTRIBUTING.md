@@ -12,17 +12,11 @@ Prerequisites:
   - [rust-fmt](https://github.com/rust-lang/rustfmt) (installed alongside rust if `rustup` was
   used for installation)
 
-> This project ships with [`flatc`](https://github.com/google/flatbuffers) binaries for `Windows`, `macOS` and `Linux`, if you encounter
-any issues during the build process, please open up an issue.
-
 ### 1. Clone the project:
 
 ```bash
-git clone --recurse-submodules https://github.com/ev3nvy/rman-rs.git
+git clone https://github.com/ev3nvy/rman-rs.git
 ```
-
-> Note the `--recurse-submodules` part, which is required beacuse the schema in the linked submodule
-is part of the build process.
 
 ### 2. Make the desired changes.
 
