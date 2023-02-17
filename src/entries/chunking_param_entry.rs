@@ -1,14 +1,14 @@
-use crate::generated::rman::Param;
+use crate::generated::rman::ChunkingParam;
 
-/// Single param entry object.
+/// Single chunking param entry object.
 ///
 /// This is identical to the schema in [rman-schema][rman-schema] and exists to provide a
-/// persistent structure for the `ParamEntry`.
+/// persistent structure for the `ChunkingParamEntry`.
 ///
 /// [rman-schema]: https://github.com/ev3nvy/rman-schema
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-pub struct ParamEntry {
+pub struct ChunkingParamEntry {
     /// Field with an unknown function and type (it might also be an [`i16`]).
     pub unk0: u16,
     /// Determines the hash type used when generating chunks.
@@ -48,13 +48,13 @@ pub struct ParamEntry {
     pub max_chunk_size: u32,
 }
 
-impl From<Param<'_>> for ParamEntry {
-    fn from(param: Param) -> Self {
-        let unk0 = param.unk0();
-        let chunking_version = param.chunking_version();
-        let min_chunk_size = param.min_chunk_size();
-        let chunk_size = param.chunk_size();
-        let max_chunk_size = param.max_chunk_size();
+impl From<ChunkingParam<'_>> for ChunkingParamEntry {
+    fn from(chunking_param: ChunkingParam) -> Self {
+        let unk0 = chunking_param.unk0();
+        let chunking_version = chunking_param.chunking_version();
+        let min_chunk_size = chunking_param.min_chunk_size();
+        let chunk_size = chunking_param.chunk_size();
+        let max_chunk_size = chunking_param.max_chunk_size();
 
         Self {
             unk0,
