@@ -3,7 +3,7 @@ use rman::RiotManifest;
 #[test]
 pub fn should_parse_from_path_when_valid_manifest() {
     let path = concat!(env!("OUT_DIR"), "/valid.manifest");
-    if let Err(error) = RiotManifest::from_path(path) {
+    if let Err(error) = RiotManifest::from_path(path, None) {
         panic!(
             "there was an error when trying to parse the manifest, manifest: {:?}",
             error
@@ -14,7 +14,7 @@ pub fn should_parse_from_path_when_valid_manifest() {
 #[test]
 pub fn should_have_correct_values_when_valid_manifest() {
     let path = concat!(env!("OUT_DIR"), "/valid.manifest");
-    let manifest = RiotManifest::from_path(path).unwrap();
+    let manifest = RiotManifest::from_path(path, None).unwrap();
 
     // TODO: header value comparsion should also be done
     assert_eq!(
@@ -58,7 +58,7 @@ pub fn should_have_correct_values_when_valid_manifest() {
 #[test]
 pub fn should_parse_from_path_when_valid_empty_manifest() {
     let path = concat!(env!("OUT_DIR"), "/valid_empty.manifest");
-    if let Err(error) = RiotManifest::from_path(path) {
+    if let Err(error) = RiotManifest::from_path(path, None) {
         panic!(
             "there was an error when trying to parse the manifest, manifest: {:?}",
             error
@@ -69,7 +69,7 @@ pub fn should_parse_from_path_when_valid_empty_manifest() {
 #[test]
 pub fn should_have_correct_values_when_valid_empty_manifest() {
     let path = concat!(env!("OUT_DIR"), "/valid_empty.manifest");
-    let manifest = RiotManifest::from_path(path).unwrap();
+    let manifest = RiotManifest::from_path(path, None).unwrap();
 
     // TODO: header value comparsion should also be done
     assert_eq!(
