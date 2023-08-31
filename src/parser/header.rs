@@ -147,6 +147,7 @@ impl Header {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::unreadable_literal)]
     use super::*;
 
     use std::io::Cursor;
@@ -162,11 +163,11 @@ mod tests {
             ($buf: ident, $error: ident) => {
                 let mut cursor = Cursor::new($buf);
                 let Err(error) = crate::Header::from_reader(&mut cursor) else {
-                                                    panic!("did not throw an error");
-                                                };
+                    panic!("did not throw an error");
+                };
                 let crate::error::ManifestError::$error(..) = error else {
-                                                    panic!("some other error was thrown");
-                                                };
+                    panic!("some other error was thrown");
+                };
             };
         }
 
@@ -177,10 +178,7 @@ mod tests {
     fn should_parse_when_valid_header() {
         let mut cursor = Cursor::new(helpers::VALID_HEADER);
         if let Err(error) = Header::from_reader(&mut cursor) {
-            panic!(
-                "there was an error when parsing header, header: {:?}",
-                error
-            );
+            panic!("there was an error when parsing header, header: {error:?}");
         };
     }
 
@@ -209,8 +207,7 @@ mod tests {
     fn should_throw_correct_errors_when_eof() {
         // EOF when reading magic bytes
         let error = Header::from_reader(&mut Cursor::new(helpers::VALID_HEADER[..3].to_owned()))
-            .err()
-            .expect("did not throw an error on missing bytes");
+            .expect_err("did not throw an error on missing bytes");
         match error {
             crate::error::ManifestError::IoError(_) => (),
             _ => panic!("invalid ManifestError error when eof"),
@@ -218,8 +215,7 @@ mod tests {
 
         // EOF when reading major
         let error = Header::from_reader(&mut Cursor::new(helpers::VALID_HEADER[..4].to_owned()))
-            .err()
-            .expect("did not throw an error on missing bytes");
+            .expect_err("did not throw an error on missing bytes");
         match error {
             crate::error::ManifestError::IoError(_) => (),
             _ => panic!("invalid ManifestError error when eof"),
@@ -227,8 +223,7 @@ mod tests {
 
         // EOF when reading minor
         let error = Header::from_reader(&mut Cursor::new(helpers::VALID_HEADER[..5].to_owned()))
-            .err()
-            .expect("did not throw an error on missing bytes");
+            .expect_err("did not throw an error on missing bytes");
         match error {
             crate::error::ManifestError::IoError(_) => (),
             _ => panic!("invalid ManifestError error when eof"),
@@ -236,8 +231,7 @@ mod tests {
 
         // EOF when reading flags
         let error = Header::from_reader(&mut Cursor::new(helpers::VALID_HEADER[..7].to_owned()))
-            .err()
-            .expect("did not throw an error on missing bytes");
+            .expect_err("did not throw an error on missing bytes");
         match error {
             crate::error::ManifestError::IoError(_) => (),
             _ => panic!("invalid ManifestError error when eof"),
@@ -245,8 +239,7 @@ mod tests {
 
         // EOF when reading offset
         let error = Header::from_reader(&mut Cursor::new(helpers::VALID_HEADER[..11].to_owned()))
-            .err()
-            .expect("did not throw an error on missing bytes");
+            .expect_err("did not throw an error on missing bytes");
         match error {
             crate::error::ManifestError::IoError(_) => (),
             _ => panic!("invalid ManifestError error when eof"),
@@ -276,9 +269,7 @@ mod tests {
         #[cfg(not(feature = "version_error"))]
         {
             let mut cursor = Cursor::new(buf);
-            if let Err(_) = Header::from_reader(&mut cursor) {
-                panic!("error was thrown")
-            }
+            assert!(Header::from_reader(&mut cursor).is_ok(), "error was thrown");
         }
 
         #[cfg(feature = "version_error")]
@@ -297,9 +288,7 @@ mod tests {
         #[cfg(not(feature = "version_error"))]
         {
             let mut cursor = Cursor::new(buf);
-            if let Err(_) = Header::from_reader(&mut cursor) {
-                panic!("error was thrown")
-            }
+            assert!(Header::from_reader(&mut cursor).is_ok(), "error was thrown");
         }
 
         #[cfg(feature = "version_error")]
