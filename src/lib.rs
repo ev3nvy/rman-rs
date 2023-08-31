@@ -1,4 +1,5 @@
 #![deny(missing_docs)]
+#![cfg_attr(docsrs, feature(doc_auto_cfg))]
 #![deny(missing_debug_implementations, missing_copy_implementations)]
 #![deny(clippy::all, clippy::pedantic, clippy::nursery, clippy::unwrap_used)]
 #![allow(clippy::module_name_repetitions, clippy::similar_names)]
@@ -132,8 +133,8 @@
 //! - reads the `.manifest` file, and verifies it's a valid `rman` file,
 //! - decompresses the containing data which was compressed using [zstd][zstd],
 //! - parses the decompressed [flatbuffer data][flatbuffers],
-//! - stores all of the parsed data on [`ManifestData`][crate::ManifestData],
-//! - combines the data into a vector of downloadable [`File`][crate::File]s,
+//! - stores all of the parsed data on [`ManifestData`],
+//! - combines the data into a vector of downloadable [`File`]s,
 //! - provides a function to [`download`][crate::File::download] specific files.
 //!
 //! This crate doesn't:
@@ -151,7 +152,7 @@
 //!
 //! # Feature: `serde`
 //!
-//! If enabled, all structs in [`entries`][crate::entries], as well as [`File`][crate::File]
+//! If enabled, all structs in [`entries`], as well as [`File`]
 //! will implement [`Serialize`][serde-serialize] and [`Deserialize`][serde-deserialize].
 //!
 //! # Feature: `native-tls`
