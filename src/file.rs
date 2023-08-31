@@ -87,7 +87,8 @@ impl File {
 
         while directory_id != 0 {
             let Some((dir_name, parent_id)) = directories.get(&directory_id) else {
-                let message = format!("could not find a directory with the following id: \"{directory_id}\"");
+                let message =
+                    format!("could not find a directory with the following id: \"{directory_id}\"");
                 return Err(ManifestError::FileParseError(message));
             };
             path = format!("{dir_name}/{path}");
@@ -112,7 +113,8 @@ impl File {
 
         for chunk_id in chunk_ids {
             let Some(chunk) = chunk_entries.get(chunk_id) else {
-                let message = format!("could not find a chunk with the following id: \"{chunk_id}\"");
+                let message =
+                    format!("could not find a chunk with the following id: \"{chunk_id}\"");
                 return Err(ManifestError::FileParseError(message));
             };
             chunks.push(chunk.to_owned());

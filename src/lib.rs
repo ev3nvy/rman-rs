@@ -38,7 +38,7 @@
 //! let path = "file.manifest";
 //!   # let path = concat!(env!("OUT_DIR"), "/valid.manifest");
 //!
-//! let manifest = RiotManifest::from_path(path)?;
+//! let manifest = RiotManifest::from_path(path, None)?;
 //!
 //! assert_eq!(manifest.data.files.len(), 1);
 //!   # Ok(())
@@ -66,7 +66,7 @@
 //! let file = fs::File::open(path)?;
 //! let mut reader = BufReader::new(file);
 //!
-//! let manifest = RiotManifest::from_reader(&mut reader)?;
+//! let manifest = RiotManifest::from_reader(&mut reader, None)?;
 //!
 //! assert_eq!(manifest.data.files.len(), 1);
 //!   # Ok(())
@@ -102,7 +102,7 @@
 //!     # );
 //!     let path = "file.manifest";
 //!     # let path = concat!(env!("OUT_DIR"), "/valid.manifest");
-//!     let manifest = RiotManifest::from_path(path)?;
+//!     let manifest = RiotManifest::from_path(path, None)?;
 //!
 //!     let file_name = "VALORANT.exe";
 //!     # let file_name = "file.txt";

@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use crate::entries::{
     BundleEntry, ChunkingParamEntry, DirectoryEntry, FileEntry, KeyEntry, TagEntry,
 };
-use crate::generated::rman::root_as_manifest;
+use crate::generated::rman::root_as_manifest_with_opts;
 use crate::File;
 use crate::Result;
 
@@ -54,8 +54,16 @@ impl ManifestData {
     ///
     /// If parsing the [`File`][crate::File] fails, it propagates an error from
     /// [`File::parse`][crate::File::parse].
-    pub fn parse(bytes: &[u8]) -> Result<Self> {
-        let manifest = root_as_manifest(bytes)?;
+    pub fn parse(
+        bytes: &[u8],
+        flatbuffer_verifier_options: Option<&flatbuffers::VerifierOptions>,
+    ) -> Result<Self> {
+        let opts = flatbuffers::VerifierOptions {
+            max_tables: 10_000_000,
+            ..Default::default()
+        };
+        let manifest =
+            root_as_manifest_with_opts(flatbuffer_verifier_options.unwrap_or(&opts), bytes)?;
 
         let bundle_entries: Vec<_> = map_vector!(manifest, bundles, BundleEntry);
         let directory_entries: Vec<_> = map_vector!(manifest, directories, DirectoryEntry);
