@@ -14,7 +14,7 @@
 [![crates.io](https://img.shields.io/crates/d/rman?style=for-the-badge)][crates-io]
 [![crates.io](https://img.shields.io/crates/l/rman?style=for-the-badge)][crates-io]
 [![docs.rs](https://img.shields.io/docsrs/rman?style=for-the-badge)][docs-rs]
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ev3nvy/rman-rs/ci.yml?branch=master&style=for-the-badge)][repository]
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ev3nvy/rman-rs/ci.yml?branch=main&style=for-the-badge)][repository]
 
 </div>
 
