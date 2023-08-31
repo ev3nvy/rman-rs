@@ -1,0 +1,100 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="rman"><title>rman - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-47e7ab555ef2818a.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="rman" data-themes="" data-resource-suffix="" data-rustdoc-version="1.74.0-nightly (59a829484 2023-08-30)" data-channel="nightly" data-search-js="search-6dfdfced5eff6596.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-f194925aa375ae96.css" data-theme-dark-css="dark-1dd4d1ce031e15de.css" data-theme-ayu-css="ayu-49e58d069f567085.css" ><script src="../static.files/storage-db41da1a38ea3cb8.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-ef3a2de404864b0b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../static.files/light-f194925aa375ae96.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../static.files/dark-1dd4d1ce031e15de.css"><link rel="stylesheet" href="../static.files/noscript-cffde32267a19fd6.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="logo-container" href="../rman/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2></h2></nav><nav class="sidebar"><a class="logo-container" href="../rman/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2 class="location"><a href="#">Crate rman</a></h2><div class="sidebar-elems"><ul class="block"><li class="version">Version 0.2.0</li><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#types">Type Aliases</a></li></ul></section></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">rman</a><button id="copy-path" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="src" href="../src/rman/lib.rs.html#1-184">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="rman"><a href="#rman">rman</a></h2>
+<p>The <code>rman</code> crate provides a convenient api for parsing and downloading
+<a href="https://technology.riotgames.com/news/supercharging-data-delivery-new-league-patcher">manifest files</a>. This format is specific to games made by <a href="https://www.riotgames.com">Riot Games</a>.</p>
+<p>Crates name is derived from the 4 magic bytes at the beginning of the <code>.manifest</code> file,
+which correspond to <code>R</code>, <code>M</code>, <code>A</code>, <code>N</code> ascii characters. <code>RMAN</code> probably stands for
+Riot Manifest (or a variation of the two words).</p>
+<h2 id="usage"><a href="#usage">Usage</a></h2>
+<p>This crate is on <a href="https://crates.io/crates/rman">crates.io</a>. To use it, just add the dependency <code>rman</code> to the
+<code>Cargo.toml</code> file.</p>
+<div class="example-wrap"><pre class="language-toml"><code>[dependencies]
+rman = &quot;0.2&quot;
+</code></pre></div><h2 id="example-parsing-a-manifest-file-from-path"><a href="#example-parsing-a-manifest-file-from-path">Example: parsing a manifest file from path</a></h2>
+<p>Easiest way to parse a manifest file is to just provide a path to it’s location.</p>
+<p><a href="struct.RiotManifest.html#method.from_path" title="associated function rman::RiotManifest::from_path"><code>from_path</code></a> calls <a href="https://doc.rust-lang.org/nightly/std/fs/struct.File.html#method.open" title="associated function std::fs::File::open"><code>File::open</code></a>
+internally, so everything from <a href="https://doc.rust-lang.org/nightly/std/primitive.str.html" title="primitive str"><code>&amp;str</code></a> to <a href="https://doc.rust-lang.org/nightly/std/path/struct.PathBuf.html" title="struct std::path::PathBuf"><code>PathBuf</code></a> is a valid
+argument.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>rman::RiotManifest;
+
+<span class="kw">let </span>path = <span class="string">&quot;file.manifest&quot;</span>;
+
+<span class="kw">let </span>manifest = RiotManifest::from_path(path, <span class="prelude-val">None</span>)<span class="question-mark">?</span>;
+
+<span class="macro">assert_eq!</span>(manifest.data.files.len(), <span class="number">1</span>);</code></pre></div>
+<h2 id="example-parsing-a-manifest-file-from-reader"><a href="#example-parsing-a-manifest-file-from-reader">Example: parsing a manifest file from reader</a></h2>
+<p>If you read the file from another source, or you already have the file in a reader,
+you can instead call <a href="struct.RiotManifest.html#method.from_reader" title="associated function rman::RiotManifest::from_reader"><code>from_reader</code></a> to parse the file.</p>
+<p>Internally, this is what <a href="struct.RiotManifest.html#method.from_path" title="associated function rman::RiotManifest::from_path"><code>from_path</code></a> calls, so the response
+of the two functions should be identical.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>std::fs;
+<span class="kw">use </span>std::io::BufReader;
+
+<span class="kw">use </span>rman::RiotManifest;
+
+<span class="kw">let </span>path = <span class="string">&quot;file.manifest&quot;</span>;
+<span class="kw">let </span>file = fs::File::open(path)<span class="question-mark">?</span>;
+<span class="kw">let </span><span class="kw-2">mut </span>reader = BufReader::new(file);
+
+<span class="kw">let </span>manifest = RiotManifest::from_reader(<span class="kw-2">&amp;mut </span>reader, <span class="prelude-val">None</span>)<span class="question-mark">?</span>;
+
+<span class="macro">assert_eq!</span>(manifest.data.files.len(), <span class="number">1</span>);</code></pre></div>
+<h2 id="example-downloading-a-file"><a href="#example-downloading-a-file">Example: downloading a file</a></h2>
+<p>To download a specific file from a parsed manifest, you can invoke the
+<a href="struct.File.html#method.download" title="method rman::File::download">download function</a> on that <a href="struct.File.html" title="struct rman::File">file</a>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>std::fs;
+
+<span class="kw">use </span>rman::{<span class="prelude-ty">Result</span>, RiotManifest};
+
+<span class="attr">#[tokio::main]
+</span><span class="kw">async fn </span>main() -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    <span class="kw">let </span>path = <span class="string">&quot;file.manifest&quot;</span>;
+    <span class="kw">let </span>manifest = RiotManifest::from_path(path, <span class="prelude-val">None</span>)<span class="question-mark">?</span>;
+
+    <span class="kw">let </span>file_name = <span class="string">&quot;VALORANT.exe&quot;</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>file = fs::File::create(file_name)<span class="question-mark">?</span>;
+    <span class="kw">let </span>file_to_download = manifest
+        .data
+        .files
+        .iter()
+        .find(|f| f.name == file_name)
+        .expect(<span class="macro">format!</span>(<span class="string">&quot;file {file_name} does not exist in this manifest&quot;</span>).as_str());
+
+    <span class="kw">let </span>url = <span class="string">&quot;https://valorant.secure.dyn.riotcdn.net/channels/public/bundles&quot;</span>;
+
+    file_to_download.download(<span class="kw-2">&amp;mut </span>file, url).<span class="kw">await</span><span class="question-mark">?</span>;
+
+    <span class="macro">assert_eq!</span>(std::fs::read(file_name)<span class="question-mark">?</span>.len(), <span class="number">4</span>);
+
+    <span class="prelude-val">Ok</span>(())
+}</code></pre></div>
+<h2 id="scope"><a href="#scope">Scope</a></h2>
+<p>This crate:</p>
+<ul>
+<li>reads the <code>.manifest</code> file, and verifies it’s a valid <code>rman</code> file,</li>
+<li>decompresses the containing data which was compressed using <a href="https://github.com/facebook/zstd">zstd</a>,</li>
+<li>parses the decompressed <a href="https://github.com/google/flatbuffers">flatbuffer data</a>,</li>
+<li>stores all of the parsed data on <a href="struct.ManifestData.html" title="struct rman::ManifestData"><code>ManifestData</code></a>,</li>
+<li>combines the data into a vector of downloadable <a href="struct.File.html" title="struct rman::File"><code>File</code></a>s,</li>
+<li>provides a function to <a href="struct.File.html#method.download" title="method rman::File::download"><code>download</code></a> specific files.</li>
+</ul>
+<p>This crate doesn’t:</p>
+<ul>
+<li>generate a <code>.manifest</code> file,</li>
+<li>create or parse chunks.</li>
+</ul>
+<h2 id="feature-default"><a href="#feature-default">Feature: <code>default</code></a></h2>
+<p>By default, only <a href="index.html#feature-rustls-tls"><code>rustls-tls</code></a> is enabled.</p>
+<h2 id="feature-version_error"><a href="#feature-version_error">Feature: <code>version_error</code></a></h2>
+<p>If enabled, throws errors on unknown manifest versions, instead of continuing and assuming it
+works.</p>
+<h2 id="feature-serde"><a href="#feature-serde">Feature: <code>serde</code></a></h2>
+<p>If enabled, all structs in <a href="entries/index.html" title="mod rman::entries"><code>entries</code></a>, as well as <a href="struct.File.html" title="struct rman::File"><code>File</code></a>
+will implement <a href="https://docs.rs/serde/latest/serde/trait.Serialize.html"><code>Serialize</code></a> and <a href="https://docs.rs/serde/latest/serde/trait.Deserialize.html"><code>Deserialize</code></a>.</p>
+<h2 id="feature-native-tls"><a href="#feature-native-tls">Feature: <code>native-tls</code></a></h2>
+<p>If enabled, the feature with the same name is enabled for <a href="https://docs.rs/reqwest/0.11.20/reqwest/index.html" title="mod reqwest"><code>reqwest</code></a>.</p>
+<h2 id="feature-rustls-tls"><a href="#feature-rustls-tls">Feature: <code>rustls-tls</code></a></h2>
+<p>If enabled, the feature with the same name is enabled for <a href="https://docs.rs/reqwest/0.11.20/reqwest/index.html" title="mod reqwest"><code>reqwest</code></a>.</p>
+</div></details><h2 id="modules" class="small-section-header"><a href="#modules">Modules</a></h2><ul class="item-table"><li><div class="item-name"><a class="mod" href="entries/index.html" title="mod rman::entries">entries</a></div><div class="desc docblock-short">Collection of entries from the parsed flatbuffer schema.</div></li></ul><h2 id="structs" class="small-section-header"><a href="#structs">Structs</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.File.html" title="struct rman::File">File</a></div><div class="desc docblock-short">Single file object.</div></li><li><div class="item-name"><a class="struct" href="struct.Header.html" title="struct rman::Header">Header</a></div><div class="desc docblock-short">File header.</div></li><li><div class="item-name"><a class="struct" href="struct.ManifestData.html" title="struct rman::ManifestData">ManifestData</a></div><div class="desc docblock-short">Stores all of the flatbuffer data, as well as the parsed files.</div></li><li><div class="item-name"><a class="struct" href="struct.RiotManifest.html" title="struct rman::RiotManifest">RiotManifest</a></div><div class="desc docblock-short">Main parser object.</div></li></ul><h2 id="enums" class="small-section-header"><a href="#enums">Enums</a></h2><ul class="item-table"><li><div class="item-name"><a class="enum" href="enum.ManifestError.html" title="enum rman::ManifestError">ManifestError</a></div><div class="desc docblock-short">This enum represents all possible errors that may occur when parsing a file.</div></li></ul><h2 id="types" class="small-section-header"><a href="#types">Type Aliases</a></h2><ul class="item-table"><li><div class="item-name"><a class="type" href="type.Result.html" title="type rman::Result">Result</a></div><div class="desc docblock-short">Alias for a <a href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result"><code>Result</code></a> with the error type <a href="enum.ManifestError.html" title="enum rman::ManifestError"><code>ManifestError</code></a>.</div></li></ul></section></div></main></body></html>

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ManifestError"],"mod":["entries"],"struct":["File","Header","ManifestData","RiotManifest"],"type":["Result"]};
