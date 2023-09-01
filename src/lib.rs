@@ -20,7 +20,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! rman = "0.2"
+//! rman = "0.3"
 //! ```
 //!
 //! # Example: parsing a manifest file from path

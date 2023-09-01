@@ -55,7 +55,7 @@ Add the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-rman = "0.2"
+rman = "0.3"
 ```
 
 ## Usage

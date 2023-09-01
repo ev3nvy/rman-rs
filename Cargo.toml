@@ -1,6 +1,6 @@
 [package]
 name = "rman"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["ev3nvy"]
 edition = "2021"
 description = "Parser for Riot Manifest file format."
