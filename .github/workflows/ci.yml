@@ -141,14 +141,14 @@ jobs:
 
       # publish to GitHub Pages
       - name: Move files
-        if: github.ref == 'refs/heads/main'
+        if: github.ref_name == 'main'
         shell: bash
         run: |
           mkdir -p ./docs/main
           mv ./target/doc/* ./docs/main/
 
       - name: Deploy docs
-        if: github.ref == 'refs/heads/main'
+        if: github.ref_name == 'main'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
