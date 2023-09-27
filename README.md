@@ -72,6 +72,12 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 If you need any help with using the library, or have any questions, feel free to open an issue,
 or ask for assistance [on discord][discord].
 
+## Documentation
+
+You can find latest release documentation on [docs.rs][docs-rs]. Versions from `0.3.0` onwards are also
+published to GitHub pages (e.g. https://ev3nvy.github.io/rman-rs/v0.3.0). You can also find
+documentation for the latest unpublished version on [GitHub pages][github-pages-docs].
+
 ## Acknowledgements
 
 - @moonshadow565 for the amazing work over at
@@ -97,6 +103,7 @@ of this project. Use at your own risk.
 [crates-io]: https://crates.io/crates/rman
 [discord]: https://discord.gg/5QVVBKBvpQ
 [docs-rs]: https://docs.rs/rman
+[github-pages-docs]: https://ev3nvy.github.io/rman-rs
 [repository]: https://github.com/ev3nvy/rman-rs
 
 
