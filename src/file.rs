@@ -30,8 +30,11 @@ pub struct File {
     pub symlink: String,
     /// A vector of applicable tags.
     pub tags: Vec<String>,
-    #[allow(dead_code)]
-    chunks: Vec<(i64, u32, u32, u32)>,
+    /// Vector of file chunks.
+    ///
+    /// Tuple represents `bundle_id`, `offset`, `uncompressed_size`, and `compressed_size` (in
+    /// that order).
+    pub chunks: Vec<(i64, u32, u32, u32)>,
 }
 
 impl File {
