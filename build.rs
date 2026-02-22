@@ -183,7 +183,7 @@ impl<'a> ValidManifest<'a> {
             &FileArgs {
                 id: 0,
                 directory_id: 1,
-                size_: 0,
+                size: 0,
                 name,
                 tag_bitmask: 0,
                 unk5: 0,

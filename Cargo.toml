@@ -10,28 +10,31 @@ keywords = ["rman", "riot", "rito", "manifest", "riot-manifest"]
 categories = ["data-structures", "encoding", "parser-implementations"]
 
 [dependencies]
-byteorder = "1.4.3"
-flatbuffers = "23.5.26"
-log = "0.4.20"
-reqwest = { version = "0.11.14", default_features = false }
-serde = { version = "1.0.188", features = ["derive"], optional = true }
-thiserror = "1.0.49"
-zstd = "0.12.4"
+byteorder = "1.5.0"
+flatbuffers = "25.12.19"
+log = "0.4.29"
+reqwest = { version = "0.13.2", default_features = false }
+serde = { version = "1.0.228", features = ["derive"], optional = true }
+thiserror = "2.0.18"
+zstd = "0.13.3"
 
 [build-dependencies]
-flatbuffers = "23.5.26"
-zstd = "0.12.4"
+flatbuffers = "25.12.19"
+zstd = "0.13.3"
 
 [dev-dependencies]
-httptest = "0.15.4"
-tokio = { version = "1.25.0", default_features = false, features = ["macros", "rt-multi-thread"] }
+httptest = "0.16.4"
+tokio = { version = "1.49.0", default_features = false, features = [
+  "macros",
+  "rt-multi-thread",
+] }
 
 [features]
-default = ["rustls-tls"]
+default = ["rustls"]
 version_error = []
 serde = ["dep:serde"]
 native-tls = ["reqwest/native-tls"]
-rustls-tls = ["reqwest/rustls-tls"]
+rustls = ["reqwest/rustls"]
 
 # docs.rs-specific configuration
 [package.metadata.docs.rs]

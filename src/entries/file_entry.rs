@@ -43,7 +43,7 @@ impl From<File<'_>> for FileEntry {
     fn from(file: File) -> Self {
         let id = file.id();
         let directory_id = file.directory_id();
-        let size = file.size_();
+        let size = file.size();
         let name = file.name().unwrap_or_default().to_owned();
         let tag_bitmask = file.tag_bitmask();
         let unk5 = file.unk5();
