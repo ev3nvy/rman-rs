@@ -1,4 +1,4 @@
-use crate::generated::rman::File;
+use crate::generated::{rman_v2_0, rman_v2_1};
 
 /// Single file entry object.
 ///
@@ -39,8 +39,8 @@ pub struct FileEntry {
     pub permissions: u8,
 }
 
-impl From<File<'_>> for FileEntry {
-    fn from(file: File) -> Self {
+impl From<rman_v2_0::File<'_>> for FileEntry {
+    fn from(file: rman_v2_0::File) -> Self {
         let id = file.id();
         let directory_id = file.directory_id();
         let size = file.size();
@@ -53,6 +53,42 @@ impl From<File<'_>> for FileEntry {
         let symlink = file.symlink().unwrap_or_default().to_owned();
         let unk10 = file.unk10();
         let chunking_param_id = file.chunking_param_id();
+        let permissions = file.permissions();
+
+        let chunk_ids = chunk_ids.iter().collect();
+
+        Self {
+            id,
+            directory_id,
+            size,
+            name,
+            tag_bitmask,
+            unk5,
+            unk6,
+            chunk_ids,
+            unk8,
+            symlink,
+            unk10,
+            chunking_param_id,
+            permissions,
+        }
+    }
+}
+
+impl From<rman_v2_1::File<'_>> for FileEntry {
+    fn from(file: rman_v2_1::File) -> Self {
+        let id = file.id();
+        let directory_id = file.directory_id();
+        let size = file.size();
+        let name = file.name().unwrap_or_default().to_owned();
+        let tag_bitmask = file.tag_bitmask();
+        let unk5 = file.unk5();
+        let unk6 = file.unk6();
+        let chunk_ids = file.chunk_ids().unwrap_or_default();
+        let unk8 = file.unk8();
+        let symlink = String::new();
+        let unk10 = file.unk9();
+        let chunking_param_id = 0;
         let permissions = file.permissions();
 
         let chunk_ids = chunk_ids.iter().collect();

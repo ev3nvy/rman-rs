@@ -1,4 +1,4 @@
-use crate::generated::rman::Key;
+use crate::generated::{rman_v2_0, rman_v2_1};
 
 /// Single key entry object.
 ///
@@ -15,8 +15,17 @@ pub struct KeyEntry {
     pub unk1: u32,
 }
 
-impl From<Key<'_>> for KeyEntry {
-    fn from(chunk: Key) -> Self {
+impl From<rman_v2_0::Key<'_>> for KeyEntry {
+    fn from(chunk: rman_v2_0::Key) -> Self {
+        let unk0 = chunk.unk0();
+        let unk1 = chunk.unk1();
+
+        Self { unk0, unk1 }
+    }
+}
+
+impl From<rman_v2_1::Key<'_>> for KeyEntry {
+    fn from(chunk: rman_v2_1::Key) -> Self {
         let unk0 = chunk.unk0();
         let unk1 = chunk.unk1();
 

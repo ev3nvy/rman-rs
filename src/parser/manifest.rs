@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use crate::entries::{
     BundleEntry, ChunkingParamEntry, DirectoryEntry, FileEntry, KeyEntry, TagEntry,
 };
-use crate::generated::rman::root_as_manifest_with_opts;
+use crate::generated::{rman_v2_0, rman_v2_1};
 use crate::File;
 use crate::Result;
 
@@ -38,33 +38,47 @@ macro_rules! map_vector {
 }
 
 impl ManifestData {
-    /// Main flatbuffer parser method.
-    ///
-    /// This method tries to parse the entire flatbuffer binary.
-    ///
-    /// Yes, I know that a huge advantage of flatbuffers is the fact that they don't need to be
-    /// parsed. However parsing the data in our case allows us to more easly explore it's
-    /// contents and provides permanent objects so that the buffer can be discarded. Not to
-    /// mention the fact that it's still plenty fast. :^)
+    /// Parse flatbuffer data of v2.0 manifest file.
     ///
     /// # Errors
     ///
-    /// If verifying the flatbuffer fails, the error
-    /// [`FlatbufferError`][crate::ManifestError::FlatbufferError] is returned.
+    /// If parsing the [`File`][crate::File] fails, it propagates an error from
+    /// [`File::parse`][crate::File::parse].
+    pub fn parse_from_manifest_v2_0(manifest: rman_v2_0::Manifest) -> Result<Self> {
+        let bundle_entries: Vec<_> = map_vector!(manifest, bundles, BundleEntry);
+        let directory_entries: Vec<_> = map_vector!(manifest, directories, DirectoryEntry);
+        let file_entries: Vec<_> = map_vector!(manifest, files, FileEntry);
+        let key_entries = map_vector!(manifest, keys, KeyEntry);
+        let tag_entries: Vec<_> = map_vector!(manifest, tags, TagEntry);
+        let chunking_param_entries = map_vector!(manifest, chunking_params, ChunkingParamEntry);
+
+        let mapped_tags = Self::map_tags(&tag_entries);
+        let mapped_directories = Self::map_directories(&directory_entries);
+        let mapped_chunks = Self::map_chunks(&bundle_entries);
+
+        let files = file_entries
+            .iter()
+            .map(|f| File::parse(f, &mapped_tags, &mapped_directories, &mapped_chunks))
+            .collect::<Result<Vec<File>>>()?;
+
+        Ok(Self {
+            bundle_entries,
+            directory_entries,
+            file_entries,
+            key_entries,
+            tag_entries,
+            chunking_param_entries,
+            files,
+        })
+    }
+
+    /// Parse flatbuffer data of v2.1 manifest file.
+    ///
+    /// # Errors
     ///
     /// If parsing the [`File`][crate::File] fails, it propagates an error from
     /// [`File::parse`][crate::File::parse].
-    pub fn parse(
-        bytes: &[u8],
-        flatbuffer_verifier_options: Option<&flatbuffers::VerifierOptions>,
-    ) -> Result<Self> {
-        let opts = flatbuffers::VerifierOptions {
-            max_tables: 10_000_000,
-            ..Default::default()
-        };
-        let manifest =
-            root_as_manifest_with_opts(flatbuffer_verifier_options.unwrap_or(&opts), bytes)?;
-
+    pub fn parse_from_manifest_v2_1(manifest: rman_v2_1::Manifest) -> Result<Self> {
         let bundle_entries: Vec<_> = map_vector!(manifest, bundles, BundleEntry);
         let directory_entries: Vec<_> = map_vector!(manifest, directories, DirectoryEntry);
         let file_entries: Vec<_> = map_vector!(manifest, files, FileEntry);

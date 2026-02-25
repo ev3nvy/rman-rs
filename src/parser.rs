@@ -8,8 +8,9 @@ use std::fs;
 use std::io::{BufReader, Read, Seek, SeekFrom};
 use std::path::Path;
 
-use log::debug;
+use log::{debug, warn};
 
+use crate::generated::{rman_v2_0, rman_v2_1};
 use crate::{ManifestError, Result};
 
 /// Main parser object.
@@ -116,7 +117,38 @@ impl RiotManifest {
             Err(error) => return Err(ManifestError::ZstdDecompressError(error)),
         };
 
-        let data = ManifestData::parse(&decompressed, flatbuffer_verifier_options)?;
+        let opts = flatbuffers::VerifierOptions {
+            max_tables: 10_000_000,
+            ..Default::default()
+        };
+
+        let data = match (header.major, header.minor) {
+            (2, 0) => {
+                let manifest = rman_v2_0::root_as_manifest_with_opts(
+                    flatbuffer_verifier_options.unwrap_or(&opts),
+                    &decompressed,
+                )?;
+                ManifestData::parse_from_manifest_v2_0(manifest)?
+            }
+            // this likely won't work because of unaligned data; users should instead re-implement
+            // this function in their own code, manually verify that manifest is valid and call
+            // root_as_manifest_unchecked instead
+            (2, 1) => {
+                let manifest = rman_v2_1::root_as_manifest_with_opts(
+                    flatbuffer_verifier_options.unwrap_or(&opts),
+                    &decompressed,
+                )?;
+                ManifestData::parse_from_manifest_v2_1(manifest)?
+            }
+            _ => {
+                warn!("unrecognized manifest version, defaulting to manifest v2.1 parser");
+                let manifest = rman_v2_1::root_as_manifest_with_opts(
+                    flatbuffer_verifier_options.unwrap_or(&opts),
+                    &decompressed,
+                )?;
+                ManifestData::parse_from_manifest_v2_1(manifest)?
+            }
+        };
 
         Ok(Self { header, data })
     }

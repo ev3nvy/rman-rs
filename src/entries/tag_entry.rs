@@ -1,4 +1,4 @@
-use crate::generated::rman::Tag;
+use crate::generated::{rman_v2_0, rman_v2_1};
 
 /// Single tag entry object.
 ///
@@ -26,8 +26,17 @@ pub struct TagEntry {
     pub name: String,
 }
 
-impl From<Tag<'_>> for TagEntry {
-    fn from(tag: Tag) -> Self {
+impl From<rman_v2_0::Tag<'_>> for TagEntry {
+    fn from(tag: rman_v2_0::Tag) -> Self {
+        let id = tag.id();
+        let name = tag.name().unwrap_or_default().to_owned();
+
+        Self { id, name }
+    }
+}
+
+impl From<rman_v2_1::Tag<'_>> for TagEntry {
+    fn from(tag: rman_v2_1::Tag) -> Self {
         let id = tag.id();
         let name = tag.name().unwrap_or_default().to_owned();
 

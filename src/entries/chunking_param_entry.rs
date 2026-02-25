@@ -1,4 +1,4 @@
-use crate::generated::rman::ChunkingParam;
+use crate::generated::{rman_v2_0, rman_v2_1};
 
 /// Single chunking param entry object.
 ///
@@ -48,8 +48,26 @@ pub struct ChunkingParamEntry {
     pub max_chunk_size: u32,
 }
 
-impl From<ChunkingParam<'_>> for ChunkingParamEntry {
-    fn from(chunking_param: ChunkingParam) -> Self {
+impl From<rman_v2_0::ChunkingParam<'_>> for ChunkingParamEntry {
+    fn from(chunking_param: rman_v2_0::ChunkingParam) -> Self {
+        let unk0 = chunking_param.unk0();
+        let chunking_version = chunking_param.chunking_version();
+        let min_chunk_size = chunking_param.min_chunk_size();
+        let chunk_size = chunking_param.chunk_size();
+        let max_chunk_size = chunking_param.max_chunk_size();
+
+        Self {
+            unk0,
+            chunking_version,
+            min_chunk_size,
+            chunk_size,
+            max_chunk_size,
+        }
+    }
+}
+
+impl From<rman_v2_1::ChunkingParam<'_>> for ChunkingParamEntry {
+    fn from(chunking_param: rman_v2_1::ChunkingParam) -> Self {
         let unk0 = chunking_param.unk0();
         let chunking_version = chunking_param.chunking_version();
         let min_chunk_size = chunking_param.min_chunk_size();

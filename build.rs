@@ -10,15 +10,15 @@
 #[allow(missing_debug_implementations, missing_copy_implementations)]
 #[allow(clippy::all, clippy::pedantic, clippy::nursery, clippy::unwrap_used)]
 #[rustfmt::skip]
-#[path = "./src/generated/schema_generated.rs"]
-mod schema_generated;
+#[path = "./src/generated/schema_v2_0_generated.rs"]
+mod schema_v2_0_generated;
 
 use std::io::{Result, Write};
 use std::path::Path;
 use std::{env, fs};
 
 mod generated {
-    pub use super::schema_generated::rman;
+    pub use super::schema_v2_0_generated::rman;
 }
 
 use flatbuffers::WIPOffset;

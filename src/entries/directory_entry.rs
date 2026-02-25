@@ -1,4 +1,4 @@
-use crate::generated::rman::Directory;
+use crate::generated::{rman_v2_0, rman_v2_1};
 
 /// Single directory entry object.
 ///
@@ -20,8 +20,22 @@ pub struct DirectoryEntry {
     pub name: String,
 }
 
-impl From<Directory<'_>> for DirectoryEntry {
-    fn from(directory: Directory) -> Self {
+impl From<rman_v2_0::Directory<'_>> for DirectoryEntry {
+    fn from(directory: rman_v2_0::Directory) -> Self {
+        let id = directory.id();
+        let parent_id = directory.parent_id();
+        let name = directory.name().unwrap_or_default().to_owned();
+
+        Self {
+            id,
+            parent_id,
+            name,
+        }
+    }
+}
+
+impl From<rman_v2_1::Directory<'_>> for DirectoryEntry {
+    fn from(directory: rman_v2_1::Directory) -> Self {
         let id = directory.id();
         let parent_id = directory.parent_id();
         let name = directory.name().unwrap_or_default().to_owned();

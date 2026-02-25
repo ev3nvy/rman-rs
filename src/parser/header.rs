@@ -22,7 +22,7 @@ pub struct Header {
     pub major: u8,
     /// Minor version of the manifest format.
     ///
-    /// So far, it's only ever been 0.
+    /// So far, it's only ever been 0 and 1.
     ///
     /// NOTE: The library logs if the version differs from 0 using the [log crate][log].
     pub minor: u8,
@@ -65,7 +65,7 @@ impl Header {
     /// [`version_error`](index.html#feature-version_error) is enabled, the error
     /// [`InvalidMajor`][crate::ManifestError::InvalidMajor] is returned.
     ///
-    /// If minor version does not equal 0, and the feature
+    /// If minor version does not equal 0 or 1, and the feature
     /// [`version_error`](index.html#feature-version_error) is enabled, the error
     /// [`InvalidMinor`][crate::ManifestError::InvalidMinor] is returned.
     ///
@@ -103,7 +103,7 @@ impl Header {
         }
 
         let minor = reader.read_u8()?;
-        if major == 2 && minor != 0 {
+        if major == 2 && minor != 0 && minor != 1 {
             info!("Invalid minor version. Parsing the manfiset will probably still work.");
             info!("If you want the crate to throw an error instead, you can enable the \"version_error\" feature");
             #[cfg(feature = "version_error")]
@@ -280,7 +280,7 @@ mod tests {
     fn should_error_when_invalid_minor() {
         let buf = [
             &helpers::VALID_HEADER[..5],
-            &[0x01],
+            &[0x02],
             &helpers::VALID_HEADER[6..],
         ]
         .concat();

@@ -32,13 +32,13 @@ pub enum ManifestError {
     InvalidMajor(u8),
     /// The error was caused by invalid minor version.
     ///
-    /// This error occurs when the minor version in the file header doesn't equal 0.
+    /// This error occurs when the minor version in the file header doesn't equal 0 or 1.
     ///
     /// Should only occur if the manifest format gets a minor change or an update. Parser
     /// should still be functional if this happens,
     ///
     /// NOTE: The feature `version_error` must be enabled for this error to occur.
-    #[error("unsupported minor version (expected: \"0\", was: \"{0}\")")]
+    #[error("unsupported minor version (expected: \"0 || 1\", was: \"{0}\")")]
     #[cfg(any(feature = "version_error", doc))]
     InvalidMinor(u8),
     /// The error was caused by an invalid offset.

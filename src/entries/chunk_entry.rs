@@ -1,4 +1,4 @@
-use crate::generated::rman::Chunk;
+use crate::generated::{rman_v2_0, rman_v2_1};
 
 /// Single chunk entry object.
 ///
@@ -21,8 +21,21 @@ pub struct ChunkEntry {
     pub uncompressed_size: u32,
 }
 
-impl From<Chunk<'_>> for ChunkEntry {
-    fn from(chunk: Chunk) -> Self {
+impl From<rman_v2_0::Chunk<'_>> for ChunkEntry {
+    fn from(chunk: rman_v2_0::Chunk) -> Self {
+        let id = chunk.id();
+        let compressed_size = chunk.compressed_size();
+        let uncompressed_size = chunk.uncompressed_size();
+
+        Self {
+            id,
+            compressed_size,
+            uncompressed_size,
+        }
+    }
+}
+impl From<rman_v2_1::Chunk<'_>> for ChunkEntry {
+    fn from(chunk: rman_v2_1::Chunk) -> Self {
         let id = chunk.id();
         let compressed_size = chunk.compressed_size();
         let uncompressed_size = chunk.uncompressed_size();

@@ -174,7 +174,7 @@
 pub mod entries;
 mod error;
 mod file;
-mod generated;
+pub mod generated;
 mod parser;
 
 pub use crate::error::{ManifestError, Result};

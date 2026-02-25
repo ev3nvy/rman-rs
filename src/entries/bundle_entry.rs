@@ -1,4 +1,4 @@
-use crate::generated::rman::Bundle;
+use crate::generated::{rman_v2_0, rman_v2_1};
 
 use super::chunk_entry::ChunkEntry;
 
@@ -17,8 +17,19 @@ pub struct BundleEntry {
     pub chunks: Vec<ChunkEntry>,
 }
 
-impl From<Bundle<'_>> for BundleEntry {
-    fn from(bundle: Bundle) -> Self {
+impl From<rman_v2_0::Bundle<'_>> for BundleEntry {
+    fn from(bundle: rman_v2_0::Bundle) -> Self {
+        let id = bundle.id();
+        let chunks = bundle.chunks().unwrap_or_default();
+
+        let chunks = chunks.iter().map(ChunkEntry::from).collect();
+
+        Self { id, chunks }
+    }
+}
+
+impl From<rman_v2_1::Bundle<'_>> for BundleEntry {
+    fn from(bundle: rman_v2_1::Bundle) -> Self {
         let id = bundle.id();
         let chunks = bundle.chunks().unwrap_or_default();
 
