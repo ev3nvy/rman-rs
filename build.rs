@@ -113,7 +113,7 @@ pub struct ValidManifest<'a> {
     name: &'a str,
 }
 
-impl<'a> ValidManifest<'a> {
+impl ValidManifest<'_> {
     #[must_use]
     pub const fn new() -> Self {
         Self { name: "valid" }
@@ -223,9 +223,9 @@ impl<'a> ValidManifest<'a> {
     }
 }
 
-impl<'a> MakeHeader for ValidManifest<'a> {}
+impl MakeHeader for ValidManifest<'_> {}
 
-impl<'a> WriteFile for ValidManifest<'a> {
+impl WriteFile for ValidManifest<'_> {
     fn name(&self) -> &str {
         self.name
     }
@@ -236,7 +236,7 @@ pub struct ValidEmptyManifest<'a> {
     name: &'a str,
 }
 
-impl<'a> ValidEmptyManifest<'a> {
+impl ValidEmptyManifest<'_> {
     #[must_use]
     pub const fn new() -> Self {
         Self {
@@ -273,9 +273,9 @@ impl<'a> ValidEmptyManifest<'a> {
     }
 }
 
-impl<'a> MakeHeader for ValidEmptyManifest<'a> {}
+impl MakeHeader for ValidEmptyManifest<'_> {}
 
-impl<'a> WriteFile for ValidEmptyManifest<'a> {
+impl WriteFile for ValidEmptyManifest<'_> {
     fn name(&self) -> &str {
         self.name
     }

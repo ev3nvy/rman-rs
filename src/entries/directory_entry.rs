@@ -13,7 +13,7 @@ pub struct DirectoryEntry {
     pub id: i64,
     /// Id of the parent directory entry.
     ///
-    /// NOTE: root directory (which is tipically the first DirectoryEntry in the vector) typically
+    /// NOTE: root directory (which is typically the first [`DirectoryEntry`] in the vector) typically
     /// has an `id` of 0, yet still has a `parent_id` of 0.
     pub parent_id: i64,
     /// Name of the directory entry.

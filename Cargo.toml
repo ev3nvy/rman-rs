@@ -13,7 +13,7 @@ categories = ["data-structures", "encoding", "parser-implementations"]
 byteorder = "1.5.0"
 flatbuffers = "25.12.19"
 log = "0.4.29"
-reqwest = { version = "0.13.2", default_features = false }
+reqwest = { version = "0.13.2", default-features = false }
 serde = { version = "1.0.228", features = ["derive"], optional = true }
 thiserror = "2.0.18"
 zstd = "0.13.3"
@@ -24,7 +24,7 @@ zstd = "0.13.3"
 
 [dev-dependencies]
 httptest = "0.16.4"
-tokio = { version = "1.49.0", default_features = false, features = [
+tokio = { version = "1.49.0", default-features = false, features = [
   "macros",
   "rt-multi-thread",
 ] }

@@ -45,16 +45,16 @@ impl File {
     ///
     /// Here is how they are structured:
     /// - Parameter `tag_entries` is a [`HashMap`] where the key is a
-    /// [tag id](crate::entries::TagEntry::id) and the value is a
-    /// [tag name](crate::entries::TagEntry::name).
+    ///   [tag id](crate::entries::TagEntry::id) and the value is a
+    ///   [tag name](crate::entries::TagEntry::name).
     ///
     /// - Parameter `directories` is a [`HashMap`] where the key is a
-    /// [directory id](crate::entries::DirectoryEntry::id) and the value is a tuple of:
+    ///   [directory id](crate::entries::DirectoryEntry::id) and the value is a tuple of:
     ///   - [directory name](crate::entries::DirectoryEntry::name)
     ///   - and [parent directory id](crate::entries::DirectoryEntry::parent_id).
     ///
     /// - Parameter `chunk_entries` is a [`HashMap`] where the key is a
-    /// [chunk id](crate::entries::ChunkEntry::id) and the value is a tuple of:
+    ///   [chunk id](crate::entries::ChunkEntry::id) and the value is a tuple of:
     ///   - [bundle id](crate::entries::BundleEntry::id),
     ///   - offset in bundle (to this specific chunk),
     ///   - [uncompressed size](crate::entries::ChunkEntry::uncompressed_size)
@@ -142,8 +142,8 @@ impl File {
     ///
     /// This is done by looping through all of the chunks of this file, and for each loop:
     /// - get the [bundle id](crate::entries::BundleEntry::id) it belongs to, and convert it to
-    /// hexadecimal value with a fixed size of 16 (if the length is less than 16, zeros are
-    /// padded to the left).
+    ///   hexadecimal value with a fixed size of 16 (if the length is less than 16, zeros are
+    ///   padded to the left).
     /// - download the chunk from the url using the range header
     /// - [decompress the chunk][zstd::bulk::decompress]
     /// - write chunk.

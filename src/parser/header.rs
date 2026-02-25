@@ -77,6 +77,9 @@ impl Header {
     /// returned.
     pub fn from_reader<R: Read + Seek>(mut reader: R) -> Result<Self> {
         debug!("Attempting to convert \"reader.bytes().count()\" into \"u32\".");
+        // lint is correct, we would either have to take size as parameter or stop using generic
+        // Read trait
+        #[allow(clippy::unbuffered_bytes)]
         let size: u32 = reader.borrow_mut().bytes().count().try_into()?;
         debug!("Successfully converted \"reader.bytes().count()\" into \"u32\".");
 
@@ -84,7 +87,7 @@ impl Header {
 
         if let Err(error) = reader.rewind() {
             return Err(ManifestError::SeekError(error));
-        };
+        }
 
         let magic = reader.read_u32::<LE>()?;
 
@@ -179,7 +182,7 @@ mod tests {
         let mut cursor = Cursor::new(helpers::VALID_HEADER);
         if let Err(error) = Header::from_reader(&mut cursor) {
             panic!("there was an error when parsing header, header: {error:?}");
-        };
+        }
     }
 
     #[test]
@@ -211,7 +214,7 @@ mod tests {
         match error {
             crate::error::ManifestError::IoError(_) => (),
             _ => panic!("invalid ManifestError error when eof"),
-        };
+        }
 
         // EOF when reading major
         let error = Header::from_reader(&mut Cursor::new(helpers::VALID_HEADER[..4].to_owned()))
@@ -219,7 +222,7 @@ mod tests {
         match error {
             crate::error::ManifestError::IoError(_) => (),
             _ => panic!("invalid ManifestError error when eof"),
-        };
+        }
 
         // EOF when reading minor
         let error = Header::from_reader(&mut Cursor::new(helpers::VALID_HEADER[..5].to_owned()))
@@ -227,7 +230,7 @@ mod tests {
         match error {
             crate::error::ManifestError::IoError(_) => (),
             _ => panic!("invalid ManifestError error when eof"),
-        };
+        }
 
         // EOF when reading flags
         let error = Header::from_reader(&mut Cursor::new(helpers::VALID_HEADER[..7].to_owned()))
@@ -235,7 +238,7 @@ mod tests {
         match error {
             crate::error::ManifestError::IoError(_) => (),
             _ => panic!("invalid ManifestError error when eof"),
-        };
+        }
 
         // EOF when reading offset
         let error = Header::from_reader(&mut Cursor::new(helpers::VALID_HEADER[..11].to_owned()))
@@ -243,7 +246,7 @@ mod tests {
         match error {
             crate::error::ManifestError::IoError(_) => (),
             _ => panic!("invalid ManifestError error when eof"),
-        };
+        }
 
         // it should be impossible for reading to fail at this point, because
         // offset must be greater than 28 and and less then file size, which

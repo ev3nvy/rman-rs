@@ -14,9 +14,9 @@ pub struct ChunkingParamEntry {
     /// Determines the hash type used when generating chunks.
     ///
     /// - 0 - Invalid/None
-    /// - 1 - SHA256
-    /// - 2 - SHA512
-    /// - 3 - RIOT_HKDF
+    /// - 1 - `SHA256`
+    /// - 2 - `SHA512`
+    /// - 3 - `RIOT_HKDF`
     ///
     /// These values are copied straight from
     /// [moonshadow565's implementation][moonshadow565-rman-rchunk].

@@ -67,7 +67,7 @@ impl RiotManifest {
     /// - reads [x amount](crate::Header::compressed_size) of bytes to buffer
     /// - [decompresses][zstd::bulk::decompress] read bytes
     /// - decompressed data is a [flatbuffer binary], that is then
-    /// [parsed][crate::ManifestData::parse].
+    ///   [parsed][crate::ManifestData::parse].
     ///
     /// # Errors
     ///
@@ -99,7 +99,7 @@ impl RiotManifest {
 
         if let Err(error) = reader.seek(SeekFrom::Start(header.offset.into())) {
             return Err(ManifestError::SeekError(error));
-        };
+        }
 
         debug!("Attempting to convert \"compressed_size\" into \"usize\".");
         let compressed_size: usize = header.compressed_size.try_into()?;
